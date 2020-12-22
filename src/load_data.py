@@ -4,22 +4,28 @@ from TCIA.tciaclient import TCIAClient
 from TCIA.tciaclientimpl import TCIAClientImpl
 
 from VisualizationTools.get_data_from_XML import *
+from VisualizationTools.utils import *
+from PIL.Image import fromarray
 import os
 
 
-# разделяем массив имен пациентов по категориям class_list
+# разделяем массив имен пациентов на тренировочную и тестировочную 
+# и по категориям class_list
 # class_list = [A, B, E, G]
 def split_names(names, class_list, prefix):
-	splited_names = [[] for _ in range(len(class_list))]
-	for name in names:
-		indx = class_list.index(str(name.replace(prefix, "")[0]))
-		splited_names[indx].append(name)
-	# для первого запуска берем не все данные, только первые из каждой категории
-	test_array = []
-	for cat in splited_names:
-		test_array.append(cat[0])
-		test_array.append(cat[1])
-	return test_array
+    splited_names = [[] for _ in range(len(class_list))]
+    for name in names:
+      indx = class_list.index(str(name.replace(prefix, "")[0]))
+      splited_names[indx].append(name)
+    # для первого запуска берем не все данные, только первые из каждой категории
+    x_train = []
+    x_test = []
+    for cat in splited_names:
+      for element in cat[:4]:
+        x_train.append(element)
+      for element in cat[4:5]:
+        x_test.append(element)
+    return {"train": x_train,"test":x_test}
 
 # classfile="VisualizationTools\\category.txt"
 # annotation_path="Annotation\\"
@@ -47,11 +53,11 @@ def download_data(classfile, annotation_path, path_to_download):
 
     # получаем имена пациентов
     patient_names = client.get_patient(client.collection)
-    patient_names = split_names(patient_names, class_list, prefix)
+    patient_names_json = split_names(patient_names, class_list, prefix)
 
     # для каждого пациента выполняем скачивание его КТ-снимков
-    for name in patient_names:
-
+    for data_type in patient_names_json:
+      for name in patient_names_json[data_type]:
         # получаем названия xml-файлов и данные об опухоли
         annotations = XML_preprocessor(os.path.join(annotation_path, name.replace(prefix, "")), num_classes=num_classes).data
 
@@ -68,13 +74,22 @@ def download_data(classfile, annotation_path, path_to_download):
         uid = client.get_patient_study(client.collection, name)
          # по StudyUID получаем один или несколько КТ-снимков
         series_uids = client.get_series(client.collection, name, uid)
-        path_to_dcm = os.path.join(path_to_download, client.collection, name.replace(prefix, "")[0], name)
+        path_to_dcm = os.path.join(path_to_download, client.collection, data_type, name.replace(prefix, "")[0], name)
 
         # загружаем данные (только те, что представлены в XML-аннотациях)
         tcia_client.downloadMissing(SOPInstanceUIDs=annotation_uids, 
                                            rootDirectory=path_to_dcm, 
                                            seriesInstanceUids=series_uids)
-
+        dcm_files = os.listdir(path_to_dcm)
+        print(path_to_dcm +  "/*.dcm to " + path_to_dcm +  "/*.jpg")
+        # преобразуем dcm в jpg
+        for dcm in dcm_files:
+          path_to_dcm_file = os.path.join(path_to_dcm, dcm)
+          matrix, frame_num, width, height, ch = loadFile(path_to_dcm_file)
+          img_bitmap = MatrixToImage(matrix[0], ch)
+          img = fromarray(img_bitmap)
+          img.save(path_to_dcm_file[:-4] + ".jpg")
+          os.remove(path_to_dcm_file)
 # example
 # classfile = os.path.join("VisualizationTools", "category.txt")
 # annotation_path = os.path.join("downloads", "Annotation")

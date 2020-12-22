@@ -294,7 +294,8 @@ class TCIAClient:
         remoteSeries.sort()
         return remoteSeries
     
-    def downloadMissing(self, SOPInstanceUIDs=None, rootDirectory="./", seriesInstanceUids=None):   
+    def downloadMissing(self, SOPInstanceUIDs=None, rootDirectory="./", seriesInstanceUids=None):
+        share_index = 0   
         for seriesInstanceUid in seriesInstanceUids:
             response = self.get_sop_instance_uids(seriesInstanceUid["SeriesInstanceUID"])
             responseSopObj = json.load(response)
@@ -325,7 +326,7 @@ class TCIAClient:
             for idx, sopInstanceUid in enumerate(sopInstanceUids):
                 print('Downloading ' + str(idx) + ' of ' + str(numberOfImages) + '...')
 
-                #downloadPath = rootDirectory + series[PatientID] + '/' + series[StudyDate] + '-' + series[StudyDescription] + '/' + series[SeriesDate] + '-' + series[SeriesDescription] + '/'
+                """
                 print(seriesInstanceUid)
                 date_folder = seriesInstanceUid["SeriesDate"] \
                                + "-" \
@@ -336,14 +337,16 @@ class TCIAClient:
                                + '-' \
                                + seriesInstanceUid["SeriesInstanceUID"][-4:]
                 downloadPath = os.path.join(rootDirectory, date_folder, series_uid_folder)
-
+                """
+                downloadPath = rootDirectory
                 if not os.path.exists(downloadPath):
                     os.makedirs(downloadPath)
                 self.get_single_image(SeriesInstanceUID = seriesInstanceUid["SeriesInstanceUID"], 
                                       SOPInstanceUID = sopInstanceUid, 
                                       downloadPath = downloadPath, 
-                                      fileName = format(idx, '06d') + '.dcm')
-        return len(seriesInstanceUids)
+                                      fileName = format(share_index, '06d') + '.dcm')
+                share_index += 1
+        return share_index
     
     def downloadMissingZipAndExtract(self, rootDirectory = "./", seriesInstanceUids = None):   
         for seriesInstanceUid in seriesInstanceUids:          
