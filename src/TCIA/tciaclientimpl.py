@@ -69,13 +69,13 @@ class TCIAClientImpl:
                 return ""
 
     # скачиваем и распаковываем аннотации            
-    def download_annotation(self, url, queryParameters):
-        if not os.path.exists("downloads"):
-            os.mkdir("downloads")
-        path_to_zip_file = "downloads/annotation.zip"
+    def download_annotation(self, url, queryParameters, path_to_download):
+        if not os.path.exists(path_to_download):
+            os.mkdir(path_to_download)
+        path_to_zip_file = os.path.join(path_to_download,"annotation.zip")
         resp = self.tcia_client.execute_download(url=url, fileName=path_to_zip_file, queryParameters=queryParameters)
         with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
-            zip_ref.extractall("./")
+            zip_ref.extractall("path_to_download")
 
 
 """

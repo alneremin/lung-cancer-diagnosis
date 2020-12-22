@@ -24,7 +24,7 @@ def splitNames(names, class_list, prefix):
 # classfile="VisualizationTools\\category.txt"
 # annotation_path="Annotation\\"
 
-def load_data(classfile, annotation_path):
+def load_data(classfile, annotation_path, path_to_download):
 
     apiKey = "7ad8c98d-74f9-4ebf-a59c-c3de09550db4"
     baseUrl = "https://services.cancerimagingarchive.net/services/v3"
@@ -35,7 +35,7 @@ def load_data(classfile, annotation_path):
     url = "https://wiki.cancerimagingarchive.net/download/attachments/70224216/Lung-PET-CT-Dx-Annotations-XML-Files-rev10152020.zip"
     queryParameters = {"version":1, "modificationDate":1603823290007, "api":"v2"}
     if not os.path.exists(annotation_path):
-    	client.download_annotation(url, queryParameters)
+    	client.download_annotation(url, queryParameters, path_to_download)
 
     # получаем кол-во классов
     class_list = get_category(classfile)
@@ -68,7 +68,7 @@ def load_data(classfile, annotation_path):
         uid = client.get_patient_study(client.collection, name)
          # по StudyUID получаем один или несколько КТ-снимков
         series_uids = client.get_series(client.collection, name, uid)
-        path_to_dcm = "downloads\\" + client.collection + '\\' + name.replace(prefix, "")[0] + '\\' + name + '\\'
+        path_to_dcm = path_to_download + "\\" + client.collection + '\\' + name.replace(prefix, "")[0] + '\\' + name + '\\'
 
         # загружаем данные (только те, что представлены в XML-аннотациях)
         tcia_client.downloadMissing(SOPInstanceUIDs=annotation_uids, 
@@ -76,4 +76,6 @@ def load_data(classfile, annotation_path):
                                            seriesInstanceUids=series_uids)
 
 # example
-# load_data(classfile="VisualizationTools\\category.txt", annotation_path="downloads\\Annotation\\")
+# load_data(classfile="VisualizationTools\\category.txt", 
+#                      annotation_path="downloads\\Annotation\\"
+#                      path_to_download = "downloads")
