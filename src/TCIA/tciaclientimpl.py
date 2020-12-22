@@ -11,7 +11,7 @@ import zipfile
 
 class TCIAClientImpl:
     def __init__(self, tcia_client, collection="Lung-PET-CT-Dx"):
-        
+
         self.tcia_client = tcia_client
         self.collection = collection
         """
@@ -70,7 +70,9 @@ class TCIAClientImpl:
 
     # скачиваем и распаковываем аннотации            
     def download_annotation(self, url, queryParameters):
-        path_to_zip_file = "annotation.zip"
+        if not os.path.exists("downloads"):
+            os.mkdir("downloads")
+        path_to_zip_file = "downloads/annotation.zip"
         resp = self.tcia_client.execute_download(url=url, fileName=path_to_zip_file, queryParameters=queryParameters)
         with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
             zip_ref.extractall("./")
