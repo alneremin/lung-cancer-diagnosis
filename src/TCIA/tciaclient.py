@@ -327,22 +327,21 @@ class TCIAClient:
 
                 #downloadPath = rootDirectory + series[PatientID] + '/' + series[StudyDate] + '-' + series[StudyDescription] + '/' + series[SeriesDate] + '-' + series[SeriesDescription] + '/'
                 print(seriesInstanceUid)
-                downloadPath = rootDirectory \
-                               + seriesInstanceUid["SeriesDate"] \
+                date_folder = seriesInstanceUid["SeriesDate"] \
                                + "-" \
-                               + seriesInstanceUid["ProtocolName"].replace("/","-").replace("\\","-") \
-                               + '\\' \
-                               + seriesInstanceUid["SeriesNumber"] \
+                               + seriesInstanceUid["ProtocolName"].replace("/","-").replace("\\","-")
+                series_uid_folder = seriesInstanceUid["SeriesNumber"] \
                                + '-' \
                                + seriesInstanceUid["Modality"] \
                                + '-' \
                                + seriesInstanceUid["SeriesInstanceUID"][-4:]
+                downloadPath = os.path.join(rootDirectory, date_folder, series_uid_folder)
 
                 if not os.path.exists(downloadPath):
                     os.makedirs(downloadPath)
                 self.get_single_image(SeriesInstanceUID = seriesInstanceUid["SeriesInstanceUID"], 
                                       SOPInstanceUID = sopInstanceUid, 
-                                      downloadPath = downloadPath + '\\', 
+                                      downloadPath = downloadPath, 
                                       fileName = format(idx, '06d') + '.dcm')
         return len(seriesInstanceUids)
     

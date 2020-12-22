@@ -71,11 +71,11 @@ class TCIAClientImpl:
     # скачиваем и распаковываем аннотации            
     def download_annotation(self, url, queryParameters, path_to_download):
         if not os.path.exists(path_to_download):
-            os.mkdir(path_to_download)
+            os.makedirs(path_to_download)
         path_to_zip_file = os.path.join(path_to_download,"annotation.zip")
         resp = self.tcia_client.execute_download(url=url, fileName=path_to_zip_file, queryParameters=queryParameters)
         with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
-            zip_ref.extractall("path_to_download")
+            zip_ref.extractall(path_to_download)
 
 
 """
@@ -88,6 +88,6 @@ patient_names = get_patient(collection)[-2:]
 for name in patient_names:
     uid = get_patient_study(collection, name)
     series_uids = get_series(collection, name, uid)
-    path_to_dcm = collection + '\\' + name + '\\'
+    path_to_dcm = os.path.join(collection, name)
     tcia_client.downloadMissing(rootDirectory=path_to_dcm, seriesInstanceUids=series_uids)
 """

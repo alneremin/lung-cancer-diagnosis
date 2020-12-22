@@ -9,7 +9,7 @@ import os
 
 # разделяем массив имен пациентов по категориям class_list
 # class_list = [A, B, E, G]
-def splitNames(names, class_list, prefix):
+def split_names(names, class_list, prefix):
 	splited_names = [[] for _ in range(len(class_list))]
 	for name in names:
 		indx = class_list.index(str(name.replace(prefix, "")[0]))
@@ -24,7 +24,7 @@ def splitNames(names, class_list, prefix):
 # classfile="VisualizationTools\\category.txt"
 # annotation_path="Annotation\\"
 
-def load_data(classfile, annotation_path, path_to_download):
+def download_data(classfile, annotation_path, path_to_download):
 
     apiKey = "7ad8c98d-74f9-4ebf-a59c-c3de09550db4"
     baseUrl = "https://services.cancerimagingarchive.net/services/v3"
@@ -47,13 +47,13 @@ def load_data(classfile, annotation_path, path_to_download):
 
     # получаем имена пациентов
     patient_names = client.get_patient(client.collection)
-    patient_names = splitNames(patient_names, class_list, prefix)
+    patient_names = split_names(patient_names, class_list, prefix)
 
     # для каждого пациента выполняем скачивание его КТ-снимков
     for name in patient_names:
 
         # получаем названия xml-файлов и данные об опухоли
-        annotations = XML_preprocessor(annotation_path + name.replace(prefix, ""), num_classes=num_classes).data
+        annotations = XML_preprocessor(os.path.join(annotation_path, name.replace(prefix, "")), num_classes=num_classes).data
 
         # формализованный результат для SOPInstanceUID #number
         # key = list(annotations.keys())[number]
@@ -68,7 +68,7 @@ def load_data(classfile, annotation_path, path_to_download):
         uid = client.get_patient_study(client.collection, name)
          # по StudyUID получаем один или несколько КТ-снимков
         series_uids = client.get_series(client.collection, name, uid)
-        path_to_dcm = path_to_download + "\\" + client.collection + '\\' + name.replace(prefix, "")[0] + '\\' + name + '\\'
+        path_to_dcm = os.path.join(path_to_download, client.collection, name.replace(prefix, "")[0], name)
 
         # загружаем данные (только те, что представлены в XML-аннотациях)
         tcia_client.downloadMissing(SOPInstanceUIDs=annotation_uids, 
@@ -76,6 +76,9 @@ def load_data(classfile, annotation_path, path_to_download):
                                            seriesInstanceUids=series_uids)
 
 # example
-# load_data(classfile="VisualizationTools\\category.txt", 
-#                      annotation_path="downloads\\Annotation\\"
-#                      path_to_download = "downloads")
+# classfile = os.path.join("VisualizationTools", "category.txt")
+# annotation_path = os.path.join("downloads", "Annotation")
+# path_to_download = "downloads"
+# download_data(classfile=classfile, 
+#                      annotation_path=annotation_path
+#                      path_to_download = path_to_download)
