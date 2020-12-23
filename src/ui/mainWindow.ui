@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>700</height>
+    <width>700</width>
+    <height>775</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,30 +18,31 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>600</width>
-    <height>700</height>
+    <width>700</width>
+    <height>775</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>600</width>
-    <height>700</height>
+    <width>700</width>
+    <height>775</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>Система меддиагностики</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(176, 224, 230)</string>
+   <string notr="true">font: 10pt corbel;
+background: rgb(245, 245, 245);	</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>100</y>
-      <width>500</width>
-      <height>550</height>
+      <x>10</x>
+      <y>80</y>
+      <width>700</width>
+      <height>800</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -50,109 +51,322 @@
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
+    <property name="minimumSize">
+     <size>
+      <width>700</width>
+      <height>800</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>700</width>
+      <height>800</height>
+     </size>
+    </property>
     <property name="focusPolicy">
      <enum>Qt::NoFocus</enum>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: white;
-font: 10pt Times New Roman</string>
+     <string notr="true">QTabWidget QWidget {
+	background: rgb(245, 245, 245);
+	color:black;
+}
+QTabWidget::pane {
+  border: none;
+} 
+
+QTabBar::tab{
+	background: red;
+	width:0; 
+	height: 0; 		
+	margin: 0;
+	padding: 0;
+	border: none;
+} 
+</string>
+    </property>
+    <property name="tabPosition">
+     <enum>QTabWidget::North</enum>
+    </property>
+    <property name="tabShape">
+     <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>4</number>
     </property>
-    <widget class="QWidget" name="Analyze">
+    <property name="usesScrollButtons">
+     <bool>true</bool>
+    </property>
+    <property name="tabBarAutoHide">
+     <bool>false</bool>
+    </property>
+    <widget class="QWidget" name="startAnalyze">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <attribute name="title">
-      <string>Анализ данных</string>
+      <string/>
      </attribute>
-     <widget class="QPushButton" name="buttonAnalysis">
+     <widget class="QTableWidget" name="tableWidget">
       <property name="geometry">
        <rect>
-        <x>260</x>
-        <y>20</y>
+        <x>0</x>
+        <y>30</y>
+        <width>631</width>
+        <height>211</height>
+       </rect>
+      </property>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <row>
+       <property name="text">
+        <string>пупкин</string>
+       </property>
+      </row>
+      <column>
+       <property name="text">
+        <string>Фамилия</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Имя</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Отчество</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Дата рождения</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>Пол</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QPushButton" name="buttonDownFile">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>250</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Далее</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="buttonAddPatient">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>250</y>
+        <width>111</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Добавить</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="downloadFile">
+     <attribute name="title">
+      <string/>
+     </attribute>
+     <widget class="QPushButton" name="buttonDownloadCTFile">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>100</y>
+        <width>141</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>Загрузить файл</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="labelFilePath">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>70</y>
+        <width>601</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Тут будет имя файла</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="buttonAnalyze">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>100</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Далее</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="Index1buttonBack">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>100</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>назад</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="Analyze">
+     <attribute name="title">
+      <string/>
+     </attribute>
+     <widget class="QPushButton" name="buttonStartAnalyze">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>110</y>
         <width>93</width>
         <height>28</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(154, 205, 50);
-font: 10pt Times New Roman</string>
+       <string notr="true"/>
       </property>
       <property name="text">
        <string>Анализ</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="saveResult">
+     <widget class="QProgressBar" name="progressAnalyze">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>470</y>
-        <width>181</width>
+        <x>40</x>
+        <y>60</y>
+        <width>301</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="value">
+       <number>56</number>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="buttonResult">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>110</y>
+        <width>93</width>
         <height>28</height>
        </rect>
       </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(154, 205, 50);
-font: 10pt Times New Roman</string>
-      </property>
       <property name="text">
-       <string>Сохранить результат</string>
+       <string>Далее</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="buttonDownloading">
+     <widget class="QPushButton" name="Index2buttonBack">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>20</y>
-        <width>226</width>
+        <x>150</x>
+        <y>110</y>
+        <width>93</width>
         <height>28</height>
        </rect>
       </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(154, 205, 50);
-font: 10pt Times New Roman</string>
-      </property>
       <property name="text">
-       <string>Выбрать пациента</string>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="editResult">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>70</y>
-        <width>441</width>
-        <height>381</height>
-       </rect>
+       <string>назад</string>
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="inputDate">
+    <widget class="QWidget" name="resultAnalyze">
      <attribute name="title">
-      <string>Ввод данных</string>
+      <string/>
      </attribute>
-     <widget class="QPushButton" name="buttonDownloading_2">
+     <widget class="QPushButton" name="saveBD">
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>170</y>
-        <width>226</width>
+        <y>570</y>
+        <width>151</width>
         <height>28</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(154, 205, 50);
-font: 10pt Times New Roman</string>
+       <string notr="true"/>
       </property>
       <property name="text">
-       <string>Загрузить доп. данные</string>
+       <string>Cохранить в бд</string>
       </property>
      </widget>
+     <widget class="QTextEdit" name="textEditResult">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>50</y>
+        <width>391</width>
+        <height>501</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background: white</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>20</y>
+        <width>181</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Результаты анализа</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="Index3buttonBack">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>570</y>
+        <width>93</width>
+        <height>28</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>назад</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="addPatient">
+     <attribute name="title">
+      <string/>
+     </attribute>
      <widget class="QLabel" name="labelName">
       <property name="geometry">
        <rect>
         <x>31</x>
         <y>73</y>
-        <width>32</width>
+        <width>91</width>
         <height>19</height>
        </rect>
       </property>
@@ -163,8 +377,8 @@ font: 10pt Times New Roman</string>
      <widget class="QLineEdit" name="lineEditSurname">
       <property name="geometry">
        <rect>
-        <x>156</x>
-        <y>41</y>
+        <x>210</x>
+        <y>30</y>
         <width>112</width>
         <height>25</height>
        </rect>
@@ -175,7 +389,7 @@ font: 10pt Times New Roman</string>
        <rect>
         <x>31</x>
         <y>41</y>
-        <width>70</width>
+        <width>101</width>
         <height>19</height>
        </rect>
       </property>
@@ -186,8 +400,8 @@ font: 10pt Times New Roman</string>
      <widget class="QLineEdit" name="lineEditName">
       <property name="geometry">
        <rect>
-        <x>156</x>
-        <y>73</y>
+        <x>210</x>
+        <y>68</y>
         <width>112</width>
         <height>25</height>
        </rect>
@@ -201,7 +415,7 @@ font: 10pt Times New Roman</string>
        <rect>
         <x>31</x>
         <y>105</y>
-        <width>73</width>
+        <width>141</width>
         <height>19</height>
        </rect>
       </property>
@@ -214,7 +428,7 @@ font: 10pt Times New Roman</string>
        <rect>
         <x>31</x>
         <y>137</y>
-        <width>118</width>
+        <width>181</width>
         <height>19</height>
        </rect>
       </property>
@@ -225,8 +439,8 @@ font: 10pt Times New Roman</string>
      <widget class="QLineEdit" name="lineEditPatronymic">
       <property name="geometry">
        <rect>
-        <x>156</x>
-        <y>105</y>
+        <x>210</x>
+        <y>100</y>
         <width>112</width>
         <height>25</height>
        </rect>
@@ -236,81 +450,63 @@ font: 10pt Times New Roman</string>
       <property name="geometry">
        <rect>
         <x>30</x>
-        <y>210</y>
-        <width>93</width>
+        <y>200</y>
+        <width>111</width>
         <height>28</height>
        </rect>
       </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(154, 205, 50);
-font: 10pt Times New Roman</string>
-      </property>
       <property name="text">
-       <string>Ввод</string>
+       <string>Добавить</string>
       </property>
      </widget>
      <widget class="QDateEdit" name="dateEdit">
       <property name="geometry">
        <rect>
-        <x>156</x>
-        <y>137</y>
-        <width>107</width>
-        <height>23</height>
+        <x>210</x>
+        <y>140</y>
+        <width>111</width>
+        <height>21</height>
        </rect>
       </property>
      </widget>
-    </widget>
-    <widget class="QWidget" name="downloadingFromFile">
-     <attribute name="title">
-      <string>Управление файлами</string>
-     </attribute>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QPushButton" name="Index4buttonBack">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>40</y>
-        <width>215</width>
-        <height>65</height>
+        <x>160</x>
+        <y>200</y>
+        <width>93</width>
+        <height>28</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QPushButton" name="buttonDownloading_3">
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(154, 205, 50);
-font: 10pt Times New Roman</string>
-         </property>
-         <property name="text">
-          <string>Выбрать пациента</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QPushButton" name="pushButton">
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(154, 205, 50);
-font: 10pt Times New Roman</string>
-         </property>
-         <property name="text">
-          <string>Выгрузить данные в файл</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <property name="text">
+       <string>назад</string>
+      </property>
      </widget>
     </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>300</x>
+      <x>400</x>
       <y>10</y>
       <width>281</width>
       <height>61</height>
      </rect>
     </property>
+    <property name="minimumSize">
+     <size>
+      <width>281</width>
+      <height>61</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>281</width>
+      <height>61</height>
+     </size>
+    </property>
     <property name="styleSheet">
-     <string notr="true">font: 10pt Times New Roman</string>
+     <string notr="true">background-color: rgb(211, 211, 211);</string>
     </property>
     <property name="title">
      <string>Пользователь</string>
@@ -318,14 +514,14 @@ font: 10pt Times New Roman</string>
     <widget class="QPushButton" name="exit">
      <property name="geometry">
       <rect>
-       <x>130</x>
-       <y>30</y>
+       <x>180</x>
+       <y>20</y>
        <width>93</width>
        <height>28</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color:white</string>
+      <string notr="true"/>
      </property>
      <property name="text">
       <string>выход</string>
@@ -336,7 +532,7 @@ font: 10pt Times New Roman</string>
       <rect>
        <x>10</x>
        <y>30</y>
-       <width>111</width>
+       <width>151</width>
        <height>20</height>
       </rect>
      </property>
