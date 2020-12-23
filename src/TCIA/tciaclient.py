@@ -339,8 +339,8 @@ class TCIAClient:
                 downloadPath = os.path.join(rootDirectory, date_folder, series_uid_folder)
                 """
                 downloadPath = rootDirectory
-                if not os.path.exists(downloadPath):
-                    os.makedirs(downloadPath)
+                #if not os.path.exists(downloadPath):
+                #    os.makedirs(downloadPath)
                 self.get_single_image(SeriesInstanceUID = seriesInstanceUid["SeriesInstanceUID"], 
                                       SOPInstanceUID = sopInstanceUid, 
                                       downloadPath = downloadPath, 

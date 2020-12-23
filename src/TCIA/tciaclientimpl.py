@@ -62,8 +62,12 @@ class TCIAClientImpl:
             try:
                 response = self.tcia_client.get_patient_study(collection = collection, patientId = name, outputFormat = "json")
                 print("\nQuery TCIA - getPatientStudy({},{}, JSON)".format(collection, name))
-                uid = json.load(response)[0]["StudyInstanceUID"]
-                return uid
+                json_response = json.load(response)
+                names = []
+                for name in json_response:
+                    names.append(name["StudyInstanceUID"])
+                names.sort()
+                return names
             except urllib.error.HTTPError as err:
                 print("Error executing program:\nError Code: ", str(err.code), "\nMessage:", err.read())
                 return ""
