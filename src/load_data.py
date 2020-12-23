@@ -21,9 +21,10 @@ def split_names(names, class_list, prefix):
     x_train = []
     x_test = []
     for cat in splited_names:
-      for element in cat[:4]:
+      separator = round(len(cat) / 5 * 4)
+      for element in cat[:separator]:
         x_train.append(element)
-      for element in cat[4:5]:
+      for element in cat[separator:]:
         x_test.append(element)
     return {"train": x_train,"test":x_test}
 
