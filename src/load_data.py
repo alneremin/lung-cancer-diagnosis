@@ -28,12 +28,13 @@ def split_names(names, class_list, prefix):
       
       for element in cat[separator:]:
         x_test.append(element)
+
     return {"train": x_train,"test":x_test}
 
 # classfile="VisualizationTools\\category.txt"
 # annotation_path="Annotation\\"
 
-def download_data(classfile, annotation_path, path_to_download):
+def download_data(classfile, annotation_path, path_to_download, patient_count):
 
     apiKey = "7ad8c98d-74f9-4ebf-a59c-c3de09550db4"
     baseUrl = "https://services.cancerimagingarchive.net/services/v3"
@@ -44,7 +45,7 @@ def download_data(classfile, annotation_path, path_to_download):
     url = "https://wiki.cancerimagingarchive.net/download/attachments/70224216/Lung-PET-CT-Dx-Annotations-XML-Files-rev10152020.zip"
     queryParameters = {"version":1, "modificationDate":1603823290007, "api":"v2"}
     if not os.path.exists(annotation_path):
-    	client_impl.download_annotation(url, queryParameters, path_to_download)
+        client_impl.download_annotation(url, queryParameters, os.path.split(annotation_path)[0])
 
     # получаем кол-во классов
     class_list = get_category(classfile)
@@ -58,17 +59,26 @@ def download_data(classfile, annotation_path, path_to_download):
     patient_names = client_impl.get_patient(client_impl.collection)
     patient_names_json = split_names(patient_names, class_list, prefix)
 
+    patient_count_current = 0
     # для каждого пациента выполняем скачивание его КТ-снимков
     for data_type in patient_names_json:
       for name in patient_names_json[data_type]:
+        
+        if patient_count_current >= patient_count:
+          return
 
-        path_to_dcm = os.path.join(path_to_download, client_impl.collection, data_type, name.replace(prefix, "")[0], name)
+        path_to_dcm = os.path.join(path_to_download, data_type, name.replace(prefix, "")[0], name)
         if os.path.exists(path_to_dcm):
           continue
 
-        # получаем названия xml-файлов и данные об опухоли
-        annotations = XML_preprocessor(os.path.join(annotation_path, name.replace(prefix, "")), num_classes=num_classes).data
+        patient_count_current += 1
 
+        try:
+          # получаем названия xml-файлов и данные об опухоли
+          annotations = XML_preprocessor(os.path.join(annotation_path, name.replace(prefix, "")), num_classes=num_classes).data
+        except FileNotFoundError:
+          print("patient_xml " + name + " not found")
+          continue
         # формализованный результат для SOPInstanceUID #number
         # key = list(annotations.keys())[number]
         # y_train[0] = annotations[key][0][-4:]
@@ -107,10 +117,13 @@ def download_data(classfile, annotation_path, path_to_download):
             img = fromarray(img_bitmap)
             img.save(path_to_dcm_file[:-4] + ".jpg")
             os.remove(path_to_dcm_file)
+
 # example
-# classfile = os.path.join("VisualizationTools", "category.txt")
-# annotation_path = os.path.join("downloads", "Annotation")
-# path_to_download = "downloads"
-# download_data(classfile=classfile, 
-#                      annotation_path=annotation_path
-#                      path_to_download = path_to_download)
+if __name__ == "__main__":
+  classfile = os.path.join("VisualizationTools", "category.txt")
+  annotation_path = os.path.join("downloads", "Annotation")
+  path_to_download = "downloads"
+  download_data(classfile=classfile, 
+                annotation_path=annotation_path,
+                path_to_download=path_to_download,
+                patient_count=300)
