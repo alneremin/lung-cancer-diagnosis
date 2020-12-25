@@ -12,55 +12,73 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_AuthWindow(object):
-    def setupUi(self, AuthWindow):
-        AuthWindow.setObjectName("AuthWindow")
-        AuthWindow.resize(403, 340)
-        AuthWindow.setStyleSheet("background-color: rgb(176, 224, 230)")
-        self.centralwidget = QtWidgets.QWidget(AuthWindow)
-        self.centralwidget.setObjectName("centralwidget")
-        self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
-        self.groupBox.setGeometry(QtCore.QRect(60, 60, 281, 211))
-        self.groupBox.setStyleSheet("background-color: white;\n"
-"font: 10pt Times New Roman")
-        self.groupBox.setTitle("")
-        self.groupBox.setObjectName("groupBox")
-        self.label_2 = QtWidgets.QLabel(self.groupBox)
-        self.label_2.setGeometry(QtCore.QRect(20, 100, 91, 16))
-        self.label_2.setStyleSheet("font: 10pt Times New Roman")
+    def setupUi(self, Form):
+        Form.setObjectName("Form")
+        Form.setWindowModality(QtCore.Qt.ApplicationModal)
+        Form.resize(400, 300)
+        Form.setMinimumSize(QtCore.QSize(400, 300))
+        Form.setMaximumSize(QtCore.QSize(400, 300))
+        Form.setAutoFillBackground(False)
+        Form.setStyleSheet("background-color:rgb(211, 211, 211)")
+        self.label_2 = QtWidgets.QLabel(Form)
+        self.label_2.setGeometry(QtCore.QRect(70, 150, 91, 31))
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
+        self.label_2.setSizePolicy(sizePolicy)
+        self.label_2.setAutoFillBackground(False)
+        self.label_2.setStyleSheet("font: 12pt corbel;\n"
+"color: black")
+        self.label_2.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.label_2.setObjectName("label_2")
-        self.userPassword = QtWidgets.QLineEdit(self.groupBox)
-        self.userPassword.setGeometry(QtCore.QRect(150, 100, 113, 22))
-        self.userPassword.setObjectName("userPassword")
-        self.label = QtWidgets.QLabel(self.groupBox)
-        self.label.setGeometry(QtCore.QRect(20, 70, 111, 16))
-        self.label.setStyleSheet("font: 10pt Times New Roman")
-        self.label.setObjectName("label")
-        self.userName = QtWidgets.QLineEdit(self.groupBox)
-        self.userName.setGeometry(QtCore.QRect(150, 70, 113, 22))
+        self.userName = QtWidgets.QLineEdit(Form)
+        self.userName.setGeometry(QtCore.QRect(220, 120, 113, 22))
+        self.userName.setStyleSheet("background-color: white")
+        self.userName.setEchoMode(QtWidgets.QLineEdit.Normal)
         self.userName.setObjectName("userNam")
-        self.buttonAuth = QtWidgets.QPushButton(self.groupBox)
-        self.buttonAuth.setGeometry(QtCore.QRect(20, 150, 81, 21))
-        self.buttonAuth.setStyleSheet("background-color: rgb(154, 205, 50);\n"
-"font: 10pt Times New Roman")
-        self.buttonAuth.setObjectName("buttonExit")
-        AuthWindow.setCentralWidget(self.centralwidget)
+        self.label = QtWidgets.QLabel(Form)
+        self.label.setGeometry(QtCore.QRect(70, 120, 141, 16))
+        self.label.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
+        self.label.setStyleSheet("font: 12pt corbel;\n"
+"color: black")
+        self.label.setObjectName("label")
+        self.label_3 = QtWidgets.QLabel(Form)
+        self.label_3.setGeometry(QtCore.QRect(90, 40, 221, 51))
+        self.label_3.setStyleSheet("font: 16pt corbel;\n"
+"color: black")
+        self.label_3.setObjectName("label_3")
+        self.userPassword = QtWidgets.QLineEdit(Form)
+        self.userPassword.setGeometry(QtCore.QRect(220, 150, 113, 22))
+        self.userPassword.setStyleSheet("background-color: white")
+        self.userPassword.setText("")
+        self.userPassword.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.userPassword.setObjectName("userPassword")
+        self.buttonExit = QtWidgets.QPushButton(Form)
+        self.buttonExit.setGeometry(QtCore.QRect(240, 210, 93, 28))
+        self.buttonExit.setStyleSheet("QPushButton{\n"
+"    background-color: rgb(255, 140, 0);\n"
+"    font: 10pt corbel\n"
+"}")
+        self.buttonExit.setObjectName("buttonExit")
 
-        self.retranslateUi(AuthWindow)
-        QtCore.QMetaObject.connectSlotsByName(AuthWindow)
+        self.retranslateUi(Form)
+        QtCore.QMetaObject.connectSlotsByName(Form)
 
-    def retranslateUi(self, AuthWindow):
+    def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        AuthWindow.setWindowTitle(_translate("AuthWindow", "Авторизация"))
-        self.label_2.setText(_translate("AuthWindow", "Пароль"))
-        self.label.setText(_translate("AuthWindow", "Пользователь"))
-        self.buttonAuth.setText(_translate("AuthWindow", "Вход"))
+        Form.setWindowTitle(_translate("Form", "Form"))
+        self.label_2.setText(_translate("Form", "Пароль"))
+        self.label.setText(_translate("Form", "Пользователь"))
+        self.label_3.setText(_translate("Form", "Добро пожаловать"))
+        self.buttonExit.setText(_translate("Form", "Вход"))
 
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    AuthWindow = QtWidgets.QMainWindow()
-    ui = Ui_AuthWindow()
-    ui.setupUi(AuthWindow)
-    AuthWindow.show()
+    Form = QtWidgets.QWidget()
+    ui = Ui_Form()
+    ui.setupUi(Form)
+    Form.show()
     sys.exit(app.exec_())
