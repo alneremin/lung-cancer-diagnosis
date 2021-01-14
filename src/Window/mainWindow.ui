@@ -40,7 +40,7 @@ background: rgb(245, 245, 245);	</string>
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>80</y>
+      <y>120</y>
       <width>700</width>
       <height>800</height>
      </rect>
@@ -92,7 +92,7 @@ QTabBar::tab{
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>2</number>
     </property>
     <property name="usesScrollButtons">
      <bool>true</bool>
@@ -107,54 +107,11 @@ QTabBar::tab{
      <attribute name="title">
       <string/>
      </attribute>
-     <widget class="QTableWidget" name="tableWidget">
+     <widget class="QPushButton" name="button_DownFile">
       <property name="geometry">
        <rect>
-        <x>0</x>
-        <y>30</y>
-        <width>631</width>
-        <height>211</height>
-       </rect>
-      </property>
-      <attribute name="verticalHeaderVisible">
-       <bool>false</bool>
-      </attribute>
-      <row>
-       <property name="text">
-        <string>пупкин</string>
-       </property>
-      </row>
-      <column>
-       <property name="text">
-        <string>Фамилия</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Имя</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Отчество</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Дата рождения</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Пол</string>
-       </property>
-      </column>
-     </widget>
-     <widget class="QPushButton" name="buttonDownFile">
-      <property name="geometry">
-       <rect>
-        <x>130</x>
-        <y>250</y>
+        <x>560</x>
+        <y>570</y>
         <width>93</width>
         <height>28</height>
        </rect>
@@ -163,17 +120,201 @@ QTabBar::tab{
        <string>Далее</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="buttonAddPatient">
+     <widget class="QPushButton" name="button_AddPatient">
       <property name="geometry">
        <rect>
-        <x>0</x>
-        <y>250</y>
-        <width>111</width>
+        <x>370</x>
+        <y>570</y>
+        <width>161</width>
         <height>28</height>
        </rect>
       </property>
       <property name="text">
-       <string>Добавить</string>
+       <string>Добавить пациента</string>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="listPatient">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>40</y>
+        <width>181</width>
+        <height>591</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: white;</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_surname">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>50</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Фамилия</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_name">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>90</y>
+        <width>55</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Имя</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_patronymic">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>130</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Отчество</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_date">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>170</y>
+        <width>121</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Дата рождения</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_gender">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>210</y>
+        <width>55</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Пол</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="surname_patient">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>50</y>
+        <width>200</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: white;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="name_patient">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>90</y>
+        <width>200</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: white;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="patronymic_patient">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>130</y>
+        <width>200</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: white;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="date_patient">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>170</y>
+        <width>200</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: white;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="gender_patient">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>210</y>
+        <width>200</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: white;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_search">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>10</y>
+        <width>113</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: white;</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="button_search">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>10</y>
+        <width>61</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Поиск</string>
       </property>
      </widget>
     </widget>
@@ -210,11 +351,11 @@ QTabBar::tab{
        <string>Тут будет имя файла</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="buttonAnalyze">
+     <widget class="QPushButton" name="button_Analyze">
       <property name="geometry">
        <rect>
-        <x>310</x>
-        <y>100</y>
+        <x>480</x>
+        <y>600</y>
         <width>93</width>
         <height>28</height>
        </rect>
@@ -223,11 +364,11 @@ QTabBar::tab{
        <string>Далее</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="Index1buttonBack">
+     <widget class="QPushButton" name="index1_button_back">
       <property name="geometry">
        <rect>
-        <x>200</x>
-        <y>100</y>
+        <x>590</x>
+        <y>600</y>
         <width>93</width>
         <height>28</height>
        </rect>
@@ -267,14 +408,14 @@ QTabBar::tab{
        </rect>
       </property>
       <property name="value">
-       <number>56</number>
+       <number>0</number>
       </property>
      </widget>
-     <widget class="QPushButton" name="buttonResult">
+     <widget class="QPushButton" name="button_Result">
       <property name="geometry">
        <rect>
-        <x>260</x>
-        <y>110</y>
+        <x>470</x>
+        <y>600</y>
         <width>93</width>
         <height>28</height>
        </rect>
@@ -283,17 +424,17 @@ QTabBar::tab{
        <string>Далее</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="Index2buttonBack">
+     <widget class="QPushButton" name="index2_button_back">
       <property name="geometry">
        <rect>
-        <x>150</x>
-        <y>110</y>
+        <x>570</x>
+        <y>600</y>
         <width>93</width>
         <height>28</height>
        </rect>
       </property>
       <property name="text">
-       <string>назад</string>
+       <string>Назад</string>
       </property>
      </widget>
     </widget>
@@ -343,7 +484,7 @@ QTabBar::tab{
        <string>Результаты анализа</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="Index3buttonBack">
+     <widget class="QPushButton" name="index3_button_back">
       <property name="geometry">
        <rect>
         <x>200</x>
@@ -449,8 +590,8 @@ QTabBar::tab{
      <widget class="QPushButton" name="buttonInput">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>200</y>
+        <x>440</x>
+        <y>600</y>
         <width>111</width>
         <height>28</height>
        </rect>
@@ -469,11 +610,11 @@ QTabBar::tab{
        </rect>
       </property>
      </widget>
-     <widget class="QPushButton" name="Index4buttonBack">
+     <widget class="QPushButton" name="index4_button_back">
       <property name="geometry">
        <rect>
-        <x>160</x>
-        <y>200</y>
+        <x>570</x>
+        <y>600</y>
         <width>93</width>
         <height>28</height>
        </rect>
@@ -487,8 +628,8 @@ QTabBar::tab{
    <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>400</x>
-      <y>10</y>
+      <x>410</x>
+      <y>50</y>
       <width>281</width>
       <height>61</height>
      </rect>
@@ -511,7 +652,7 @@ QTabBar::tab{
     <property name="title">
      <string>Пользователь</string>
     </property>
-    <widget class="QPushButton" name="exit">
+    <widget class="QPushButton" name="button_exit">
      <property name="geometry">
       <rect>
        <x>180</x>
@@ -541,6 +682,54 @@ QTabBar::tab{
      </property>
      <property name="text">
       <string>Авдеев И.А</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="tabBar">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>701</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: black; font: 10pt</string>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <widget class="QPushButton" name="button_close">
+     <property name="geometry">
+      <rect>
+       <x>660</x>
+       <y>5</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: white</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="button_info">
+     <property name="geometry">
+      <rect>
+       <x>620</x>
+       <y>5</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: white</string>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </widget>
