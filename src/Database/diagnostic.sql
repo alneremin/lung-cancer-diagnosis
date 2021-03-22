@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS "Patient" (
 	"name"	TEXT NOT NULL,
 	"patronym"	TEXT,
 	"date_of_birth"	TEXT NOT NULL,
-	"sex"	TEXT NOT NULL CHECK('ж' OR 'м'),
+	"sex"	TEXT NOT NULL CHECK('m' OR 'f'),
 	"address"	TEXT NOT NULL,
 	"phone_number"	TEXT NOT NULL,
 	"next of kin"	TEXT,
