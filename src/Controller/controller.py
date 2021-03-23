@@ -26,6 +26,8 @@ class Controller():
 
     def controllClicked(self):
         self.authorizationWindow.window.button_entrance.clicked.connect(self.authorization)
+        self.authorizationWindow.aut.authorizeSignal.connect(self.authorization)
+
         self.mainWindow.window.button_exit.clicked.connect(self.exit)
 
     def exit(self):
@@ -33,8 +35,19 @@ class Controller():
         self.authorizationWindow.show()
     
     def authorization(self):
-        self.authorizationWindow.close()
-        self.mainWindow.show()
+        user = self.authorizationWindow.window.user_name.text()
+        password = self.authorizationWindow.window.user_password.text()
+        if self.db.authorize(user, password):
+            self.authorizationWindow.close()
+            self.mainWindow.window.User.setText(user)
+            self.mainWindow.show()
+        else:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("Invalid user or password")
+            #msg.setInformativeText('More information')
+            msg.setWindowTitle("Attention!")
+            msg.exec_()
 
     def search(self):
         pass

@@ -42,6 +42,18 @@ class Database:
         query.finish()
         return data
 
+    def authorize(self, user, password):
+        query = QSqlQuery()
+        query.exec(
+          f"SELECT 1 FROM Users WHERE login=\'{user}\' AND password=\'{password}\'"
+        )
+        while query.next():
+            query.finish()
+            return True
+        query.finish()
+        return False
+        
+
     def getPatients(self):
         data = []
         query = QSqlQuery()

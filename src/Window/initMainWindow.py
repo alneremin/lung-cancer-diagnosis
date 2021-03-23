@@ -1,4 +1,5 @@
 import sys
+import os
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtCore import Qt, QPoint,QSize
 from PyQt5.QtGui import QIcon, QFont, QColor
@@ -8,6 +9,7 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QTableWidget,
     QTableWidgetItem,
+    QFileDialog
 )
 from Window.mainWindow import Ui_MainWindow
 
@@ -25,9 +27,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.window.button_DownFile.setEnabled(False)
         self.window.tabWidget.setCurrentIndex(0)
         self.init_page_startAnaluyze()
-        self.signal_button_clicked()
 
-        self.window.button_search.clicked.connect(self.search)
+        self.signal_button_clicked()
+        self.window.button_search.setEnabled(False)
+        #self.window.button_search.clicked.connect(self.search)
+        self.window.lineEdit_search.textChanged.connect(self.search)
         self.window.tablePatient.clicked.connect(self.selectionChanged)
     
     def init_tables(self):
@@ -51,6 +55,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.window.button_Analyze.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(2))
         self.window.button_DownFile.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(1))
         self.window.button_Result.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(3))
+
+        self.window.button_load_file.clicked.connect(self.load_file)
         
     def init_page_startAnaluyze(self):
         #label
@@ -67,6 +73,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.window.gender_patient.hide()
         
     def selectionChanged(self, item):
+        
         if item.row() != -1:
             items = [
                 self.window.tablePatient.item(item.row(), i).text() for i in range(self.window.tablePatient.columnCount())
@@ -77,22 +84,27 @@ class MainWindow(QtWidgets.QMainWindow):
             self.window.label_date.show()
             self.window.label_gender.show()
             #info
-            self.window.surname_patient.setText(items[1])
+            self.window.surname_patient.setText(items[2])
             self.window.surname_patient.show()
-            self.window.name_patient.setText(items[2])
+            self.window.name_patient.setText(items[3])
             self.window.name_patient.show()
-            self.window.patronymic_patient.setText(items[3])
+            self.window.patronymic_patient.setText(items[4])
             self.window.patronymic_patient.show()
-            self.window.date_patient.setText(items[4])
+            self.window.date_patient.setText(items[5])
             self.window.date_patient.show()
-            self.window.gender_patient.setText(items[5])
+            self.window.gender_patient.setText(items[6])
             self.window.gender_patient.show()
             self.window.button_DownFile.setEnabled(True)
 
     def search(self):
-        pass
-        #data = self.db.findByName(self.mainwindow.window.lineEdit_search.text())
-        #self.mainwindow.window.listPatient.addItem(self.mainwindow.window.lineEdit_search.text())
+        for i in range(self.window.tablePatient.rowCount()):
+            search_text = str.lower(self.window.lineEdit_search.text())
+            patient_name = str.lower(self.window.tablePatient.item(i, 0).text())
+            
+            if search_text in patient_name:
+                self.window.tablePatient.showRow(i)
+            else:
+                self.window.tablePatient.hideRow(i)
 
     def close_window(self):
         reply = QMessageBox.question(self,
@@ -103,6 +115,10 @@ class MainWindow(QtWidgets.QMainWindow):
             QtWidgets.QApplication.quit()
         else:
             pass
+
+    def load_file(self):
+        fname = QFileDialog.getOpenFileName(self, 'Open file', os.getcwd(),"Image files (*.jpg *.dcm *.png)")
+        self.window.label_file_path.setText(fname[0])
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:

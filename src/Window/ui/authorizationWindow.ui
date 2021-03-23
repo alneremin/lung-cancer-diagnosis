@@ -34,7 +34,7 @@
   <property name="styleSheet">
    <string notr="true">background-color:rgb(211, 211, 211)</string>
   </property>
-  <widget class="QLineEdit" name="userNam">
+  <widget class="QLineEdit" name="user_name">
    <property name="geometry">
     <rect>
      <x>120</x>
@@ -67,7 +67,7 @@ color: black</string>
     <string>Добро пожаловать</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="userPassword">
+  <widget class="QLineEdit" name="user_password">
    <property name="geometry">
     <rect>
      <x>120</x>

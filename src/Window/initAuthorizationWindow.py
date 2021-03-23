@@ -1,9 +1,13 @@
 import sys
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import Qt, QPoint,QSize
+from PyQt5.QtCore import Qt, QPoint,QSize, pyqtSignal, QObject
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMessageBox
 from Window.authorizationWindow import Ui_authorization
+
+class Authorize(QObject):
+
+    authorizeSignal = pyqtSignal()
 
 class AuthorizationWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -11,6 +15,7 @@ class AuthorizationWindow(QtWidgets.QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.window = Ui_authorization()
         self.window.setupUi(self)
+        self.aut = Authorize()
         #self.setWindowFlag(Qt.FramelessWindowHint)
         #self.setWindowFlag(Qt.WindowStaysOnTopHint)
         self.window.tabBar.hide()
@@ -31,7 +36,12 @@ class AuthorizationWindow(QtWidgets.QMainWindow):
             QtWidgets.QApplication.quit()
         else:
             pass
-        
+    
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Return:
+            self.aut.authorizeSignal.emit()
+        event.accept()
+
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.__press_pos = event.pos()  
