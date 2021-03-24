@@ -19,14 +19,14 @@ class AuthorizationWindow(QtWidgets.QMainWindow):
         #self.setWindowFlag(Qt.FramelessWindowHint)
         #self.setWindowFlag(Qt.WindowStaysOnTopHint)
         self.window.tabBar.hide()
-        self.window.button_close.setText("{}".format('X'))
-        self.window.button_info.setText("{}".format('?'))
-        self.signal_button_clicked()
+        self.window.buttonClose.setText("{}".format('X'))
+        self.window.buttonInfo.setText("{}".format('?'))
+        self.signalButtonClicked()
 
-    def signal_button_clicked(self):
-        self.window.button_close.clicked.connect(self.close_window)
+    def signalButtonClicked(self):
+        self.window.buttonClose.clicked.connect(self.closeWindow)
 
-    def close_window(self):
+    def closeWindow(self):
         reply = QMessageBox.question(self,
                                      "Message",
                                      "Вы точно хотите закрыть приложение?",

@@ -20,21 +20,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self.window.setupUi(self)
         #self.setWindowFlag(Qt.FramelessWindowHint)
         #self.setWindowFlag(Qt.WindowStaysOnTopHint)
-        self.init_tables()
+        self.initTables()
         self.window.tabBar.hide()
-        self.window.button_close.setText("{}".format('X'))
-        self.window.button_info.setText("{}".format('?'))
-        self.window.button_DownFile.setEnabled(False)
+        self.window.buttonClose.setText("{}".format('X'))
+        self.window.buttonInfo.setText("{}".format('?'))
+        self.window.buttonDownFile.setEnabled(False)
         self.window.tabWidget.setCurrentIndex(0)
-        self.init_page_startAnaluyze()
+        self.initPageStartAnalyze()
 
-        self.signal_button_clicked()
-        self.window.button_search.setEnabled(False)
+        self.initSignalsWhenButtonClicked()
+        self.window.buttonSearch.setEnabled(False)
         #self.window.button_search.clicked.connect(self.search)
-        self.window.lineEdit_search.textChanged.connect(self.search)
-        self.window.tablePatient.clicked.connect(self.selectionChanged)
+        self.window.lineEditSearch.textChanged.connect(self.search)
+        self.window.tablePatient.selectionModel().currentChanged.connect(self.selectionChanged)
     
-    def init_tables(self):
+    def initTables(self):
         #self.window.tablePatient = QTableWidget()
         self.window.tablePatient.setColumnCount(7)
         self.window.tablePatient.setHorizontalHeaderLabels(["fullname", "id", "surname", "name", "patronym", "date_of_birth", "sex"])
@@ -42,35 +42,37 @@ class MainWindow(QtWidgets.QMainWindow):
         for i in range(1,7):
             self.window.tablePatient.setColumnHidden(i, True)
 
-    def signal_button_clicked(self):
-        self.window.button_close.clicked.connect(self.close_window)
+    def initSignalsWhenButtonClicked(self):
+        self.window.buttonClose.clicked.connect(self.closeWindow)
 
         #back
-        self.window.index4_button_back.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(0))
-        self.window.index3_button_back.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(2))
-        self.window.index2_button_back.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(1))
-        self.window.index1_button_back.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(0))
+        self.window.index4ButtonBack.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(0))
+        self.window.index3ButtonBack.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(2))
+        self.window.index2ButtonBack.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(1))
+        self.window.index1ButtonBack.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(0))
         #go tab
-        self.window.button_AddPatient.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(4))
-        self.window.button_Analyze.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(2))
-        self.window.button_DownFile.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(1))
-        self.window.button_Result.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(3))
+        self.window.buttonAddPatient.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(4))
+        self.window.buttonAnalyze.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(2))
+        self.window.buttonDownFile.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(1))
+        self.window.buttonResult.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(3))
 
-        self.window.button_load_file.clicked.connect(self.load_file)
+        self.window.buttonLoadFile.clicked.connect(self.loadFile)
         
-    def init_page_startAnaluyze(self):
+    def initPageStartAnalyze(self):
+
         #label
-        self.window.label_surname.hide()
-        self.window.label_name.hide()
-        self.window.label_patronymic.hide()
-        self.window.label_date.hide()
-        self.window.label_gender.hide()
+        self.window.labelSurname_2.hide()
+        self.window.labelName_2.hide()
+        self.window.labelPatronymic_2.hide()
+        self.window.labelDate.hide()
+        self.window.labelGender.hide()
         #info
-        self.window.surname_patient.hide()
-        self.window.name_patient.hide()
-        self.window.patronymic_patient.hide()
-        self.window.date_patient.hide()
-        self.window.gender_patient.hide()
+        self.window.surnamePatient.hide()
+        self.window.namePatient.hide()
+        self.window.patronymicPatient.hide()
+        self.window.datePatient.hide()
+        self.window.genderPatient.hide()
+
         
     def selectionChanged(self, item):
         
@@ -78,35 +80,39 @@ class MainWindow(QtWidgets.QMainWindow):
             items = [
                 self.window.tablePatient.item(item.row(), i).text() for i in range(self.window.tablePatient.columnCount())
             ]
-            self.window.label_surname.show()
-            self.window.label_name.show()
-            self.window.label_patronymic.show()
-            self.window.label_date.show()
-            self.window.label_gender.show()
+            
+            #label
+            self.window.labelSurname_2.show()
+            self.window.labelName_2.show()
+            self.window.labelPatronymic_2.show()
+            self.window.labelDate.show()
+            self.window.labelGender.show()
             #info
-            self.window.surname_patient.setText(items[2])
-            self.window.surname_patient.show()
-            self.window.name_patient.setText(items[3])
-            self.window.name_patient.show()
-            self.window.patronymic_patient.setText(items[4])
-            self.window.patronymic_patient.show()
-            self.window.date_patient.setText(items[5])
-            self.window.date_patient.show()
-            self.window.gender_patient.setText(items[6])
-            self.window.gender_patient.show()
-            self.window.button_DownFile.setEnabled(True)
+            self.window.surnamePatient.show()
+            self.window.namePatient.show()
+            self.window.patronymicPatient.show()
+            self.window.datePatient.show()
+            self.window.genderPatient.show()
+            
+            self.window.surnamePatient.setText(items[2])
+            self.window.namePatient.setText(items[3])
+            self.window.patronymicPatient.setText(items[4])
+            self.window.datePatient.setText(items[5])
+            self.window.genderPatient.setText(items[6])
+
+            self.window.buttonDownFile.setEnabled(True)
 
     def search(self):
         for i in range(self.window.tablePatient.rowCount()):
-            search_text = str.lower(self.window.lineEdit_search.text())
-            patient_name = str.lower(self.window.tablePatient.item(i, 0).text())
+            searchText = str.lower(self.window.lineEditSearch.text())
+            patientName = str.lower(self.window.tablePatient.item(i, 0).text())
             
-            if search_text in patient_name:
+            if searchText in patientName:
                 self.window.tablePatient.showRow(i)
             else:
                 self.window.tablePatient.hideRow(i)
 
-    def close_window(self):
+    def closeWindow(self):
         reply = QMessageBox.question(self,
                                      "Message",                                     "Вы точно хотите закрыть приложение?",
                                      QMessageBox.Yes | QMessageBox.No,
@@ -116,9 +122,9 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             pass
 
-    def load_file(self):
+    def loadFile(self):
         fname = QFileDialog.getOpenFileName(self, 'Open file', os.getcwd(),"Image files (*.jpg *.dcm *.png)")
-        self.window.label_file_path.setText(fname[0])
+        self.window.labelFilePath.setText(fname[0])
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -131,3 +137,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def mouseMoveEvent(self, event):
         if not self.__press_pos.isNull():  
             self.move(self.pos() + (event.pos() - self.__press_pos))
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Return and self.window.tabWidget.currentIndex() == 0:
+            self.window.tabWidget.setCurrentIndex(1)
+        event.accept()

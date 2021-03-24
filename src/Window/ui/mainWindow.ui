@@ -68,7 +68,7 @@ QTabBar::tab{
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>4</number>
     </property>
     <property name="usesScrollButtons">
      <bool>true</bool>
@@ -89,14 +89,14 @@ QTabBar::tab{
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QLineEdit" name="lineEdit_search">
+           <widget class="QLineEdit" name="lineEditSearch">
             <property name="styleSheet">
              <string notr="true">background-color: white;</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="button_search">
+           <widget class="QPushButton" name="buttonSearch">
             <property name="text">
              <string>Поиск</string>
             </property>
@@ -106,6 +106,9 @@ QTabBar::tab{
         </item>
         <item>
          <widget class="QTableWidget" name="tablePatient">
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
           <property name="selectionMode">
            <enum>QAbstractItemView::SingleSelection</enum>
           </property>
@@ -119,20 +122,41 @@ QTabBar::tab{
         </item>
        </layout>
       </item>
+      <item row="1" column="1">
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="verticalSpacing">
+         <number>16</number>
+        </property>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="buttonDownFile">
+          <property name="text">
+           <string>Далее</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QPushButton" name="buttonAddPatient">
+          <property name="text">
+           <string>Добавить пациента</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
       <item row="0" column="1">
        <layout class="QFormLayout" name="formLayout">
         <property name="verticalSpacing">
          <number>16</number>
         </property>
         <item row="0" column="0">
-         <widget class="QLabel" name="label_surname">
+         <widget class="QLabel" name="labelSurname_2">
           <property name="text">
            <string>Фамилия</string>
           </property>
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QLabel" name="surname_patient">
+         <widget class="QLabel" name="surnamePatient">
           <property name="styleSheet">
            <string notr="true">background-color: white;</string>
           </property>
@@ -142,14 +166,14 @@ QTabBar::tab{
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="label_name">
+         <widget class="QLabel" name="labelName_2">
           <property name="text">
            <string>Имя</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QLabel" name="name_patient">
+         <widget class="QLabel" name="namePatient">
           <property name="styleSheet">
            <string notr="true">background-color: white;</string>
           </property>
@@ -159,14 +183,14 @@ QTabBar::tab{
          </widget>
         </item>
         <item row="2" column="0">
-         <widget class="QLabel" name="label_patronymic">
+         <widget class="QLabel" name="labelPatronymic_2">
           <property name="text">
            <string>Отчество</string>
           </property>
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QLabel" name="patronymic_patient">
+         <widget class="QLabel" name="patronymicPatient">
           <property name="styleSheet">
            <string notr="true">background-color: white;</string>
           </property>
@@ -176,14 +200,14 @@ QTabBar::tab{
          </widget>
         </item>
         <item row="3" column="0">
-         <widget class="QLabel" name="label_date">
+         <widget class="QLabel" name="labelDate">
           <property name="text">
            <string>Дата рождения</string>
           </property>
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QLabel" name="date_patient">
+         <widget class="QLabel" name="datePatient">
           <property name="styleSheet">
            <string notr="true">background-color: white;</string>
           </property>
@@ -193,40 +217,19 @@ QTabBar::tab{
          </widget>
         </item>
         <item row="4" column="0">
-         <widget class="QLabel" name="label_gender">
+         <widget class="QLabel" name="labelGender">
           <property name="text">
            <string>Пол</string>
           </property>
          </widget>
         </item>
         <item row="4" column="1">
-         <widget class="QLabel" name="gender_patient">
+         <widget class="QLabel" name="genderPatient">
           <property name="styleSheet">
            <string notr="true">background-color: white;</string>
           </property>
           <property name="text">
            <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="1">
-       <layout class="QGridLayout" name="gridLayout">
-        <property name="verticalSpacing">
-         <number>16</number>
-        </property>
-        <item row="1" column="0">
-         <widget class="QPushButton" name="button_DownFile">
-          <property name="text">
-           <string>Далее</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QPushButton" name="button_AddPatient">
-          <property name="text">
-           <string>Добавить пациента</string>
           </property>
          </widget>
         </item>
@@ -249,14 +252,14 @@ QTabBar::tab{
       <item row="0" column="0" colspan="2">
        <layout class="QVBoxLayout" name="verticalLayout_7">
         <item>
-         <widget class="QLabel" name="label_file_path">
+         <widget class="QLabel" name="labelFilePath">
           <property name="text">
            <string/>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="button_load_file">
+         <widget class="QPushButton" name="buttonLoadFile">
           <property name="styleSheet">
            <string notr="true"/>
           </property>
@@ -266,14 +269,14 @@ QTabBar::tab{
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="button_Analyze">
+         <widget class="QPushButton" name="buttonAnalyze">
           <property name="text">
            <string>Далее</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="index1_button_back">
+         <widget class="QPushButton" name="index1ButtonBack">
           <property name="text">
            <string>назад</string>
           </property>
@@ -292,8 +295,8 @@ QTabBar::tab{
        <rect>
         <x>20</x>
         <y>60</y>
-        <width>341</width>
-        <height>80</height>
+        <width>641</width>
+        <height>41</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -302,15 +305,8 @@ QTabBar::tab{
          <property name="value">
           <number>0</number>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="buttonStartAnalyze">
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
-         <property name="text">
-          <string>Анализ</string>
+         <property name="format">
+          <string>Waiting...</string>
          </property>
         </widget>
        </item>
@@ -327,20 +323,36 @@ QTabBar::tab{
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
-        <widget class="QPushButton" name="button_Result">
+        <widget class="QPushButton" name="buttonResult">
          <property name="text">
           <string>Далее</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="index2_button_back">
+        <widget class="QPushButton" name="index2ButtonBack">
          <property name="text">
           <string>Назад</string>
          </property>
         </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QPushButton" name="buttonStartAnalyze">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>110</y>
+        <width>131</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>Анализ</string>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="resultAnalyze">
@@ -384,7 +396,7 @@ QTabBar::tab{
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="QPushButton" name="saveBD">
+        <widget class="QPushButton" name="saveDB">
          <property name="styleSheet">
           <string notr="true"/>
          </property>
@@ -394,7 +406,7 @@ QTabBar::tab{
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="index3_button_back">
+        <widget class="QPushButton" name="index3ButtonBack">
          <property name="text">
           <string>назад</string>
          </property>
@@ -464,14 +476,14 @@ QTabBar::tab{
        <item row="4" column="1">
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QPushButton" name="buttonInput">
+          <widget class="QPushButton" name="buttonAddPatientInDB">
            <property name="text">
             <string>Добавить</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="index4_button_back">
+          <widget class="QPushButton" name="index4ButtonBack">
            <property name="text">
             <string>назад</string>
            </property>
@@ -510,7 +522,7 @@ QTabBar::tab{
     <property name="title">
      <string>Пользователь</string>
     </property>
-    <widget class="QPushButton" name="button_exit">
+    <widget class="QPushButton" name="buttonExit">
      <property name="geometry">
       <rect>
        <x>180</x>
@@ -558,7 +570,7 @@ QTabBar::tab{
     <property name="title">
      <string/>
     </property>
-    <widget class="QPushButton" name="button_close">
+    <widget class="QPushButton" name="buttonClose">
      <property name="geometry">
       <rect>
        <x>660</x>
@@ -574,7 +586,7 @@ QTabBar::tab{
       <string/>
      </property>
     </widget>
-    <widget class="QPushButton" name="button_info">
+    <widget class="QPushButton" name="buttonInfo">
      <property name="geometry">
       <rect>
        <x>620</x>
