@@ -123,11 +123,11 @@ class Controller(QObject):
             self.mainWindow.window.tabWidget.setCurrentIndex(3)
 
     def analyze(self, filePath):
-        loaded = True#self.mia.loadModel()
+        loaded = self.mia.loadModel()
 
         if loaded:
             self.inProgress.emit([0])
-            res = ""#self.mia.classify(filePath)
+            res = self.mia.classify(filePath)
             if len(res) > 0:
                 self.inProgress.emit([1])
                 self.inProgress.emit([res])
