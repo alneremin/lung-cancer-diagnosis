@@ -18,13 +18,14 @@ class AuthorizationWindow(QtWidgets.QMainWindow):
         self.aut = Authorize()
         #self.setWindowFlag(Qt.FramelessWindowHint)
         #self.setWindowFlag(Qt.WindowStaysOnTopHint)
-        self.window.tabBar.hide()
-        self.window.buttonClose.setText("{}".format('X'))
-        self.window.buttonInfo.setText("{}".format('?'))
+        #self.window.tabBar.hide()
+        #self.window.buttonClose.setText("{}".format('X'))
+        #self.window.buttonInfo.setText("{}".format('?'))
         self.signalButtonClicked()
 
     def signalButtonClicked(self):
-        self.window.buttonClose.clicked.connect(self.closeWindow)
+        pass
+        #self.window.buttonClose.clicked.connect(self.closeWindow)
 
     def closeWindow(self):
         reply = QMessageBox.question(self,

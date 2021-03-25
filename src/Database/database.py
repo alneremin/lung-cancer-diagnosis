@@ -74,7 +74,7 @@ class Database:
         res = query.exec(
             f"""
             INSERT INTO Patient (surname, name, patronym, date_of_birth, sex, address, phone_number, "next of kin", doctor)
-            VALUES ('{data[0]}', '{data[1]}', '{data[2]}', '{data[3]}', 'm', '', '', '', '')
+            VALUES ('{data[0]}', '{data[1]}', '{data[2]}', '{data[3]}', '{data[4]}', '', '', '', '')
             """
         )
         return res

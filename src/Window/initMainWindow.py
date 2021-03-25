@@ -21,15 +21,14 @@ class MainWindow(QtWidgets.QMainWindow):
         #self.setWindowFlag(Qt.FramelessWindowHint)
         #self.setWindowFlag(Qt.WindowStaysOnTopHint)
         self.initTables()
-        self.window.tabBar.hide()
-        self.window.buttonClose.setText("{}".format('X'))
-        self.window.buttonInfo.setText("{}".format('?'))
-        self.window.buttonDownFile.setEnabled(False)
+        #self.window.tabBar.hide()
+        #self.window.buttonClose.setText("{}".format('X'))
+        #self.window.buttonInfo.setText("{}".format('?'))
+        #self.window.buttonDownFile.setEnabled(False)
         self.window.tabWidget.setCurrentIndex(0)
         self.initPageStartAnalyze()
-
         self.initSignalsWhenButtonClicked()
-        self.window.buttonSearch.setEnabled(False)
+        #self.window.buttonSearch.setEnabled(False)
         #self.window.button_search.clicked.connect(self.search)
         self.window.lineEditSearch.textChanged.connect(self.search)
         self.window.tablePatient.selectionModel().currentChanged.connect(self.selectionChanged)
@@ -43,23 +42,49 @@ class MainWindow(QtWidgets.QMainWindow):
             self.window.tablePatient.setColumnHidden(i, True)
 
     def initSignalsWhenButtonClicked(self):
-        self.window.buttonClose.clicked.connect(self.closeWindow)
+        pass
+        #self.window.buttonClose.clicked.connect(self.closeWindow)
 
         #back
-        self.window.index4ButtonBack.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(0))
-        self.window.index3ButtonBack.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(2))
-        self.window.index2ButtonBack.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(1))
-        self.window.index1ButtonBack.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(0))
+        #self.window.index4ButtonBack.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(0))
+        #self.window.index3ButtonBack.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(2))
+        #self.window.index2ButtonBack.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(1))
+        #self.window.index1ButtonBack.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(0))
         #go tab
-        self.window.buttonAddPatient.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(4))
-        self.window.buttonAnalyze.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(2))
-        self.window.buttonDownFile.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(1))
-        self.window.buttonResult.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(3))
+        self.window.buttonAddPatient.clicked.connect(self.openAddPatientPage)
+        #self.window.buttonAnalyze.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(2))
+        #self.window.buttonDownFile.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(1))
+        #self.window.buttonResult.clicked.connect(lambda: self.window.tabWidget.setCurrentIndex(3))
+        self.window.buttonForward.clicked.connect(self.forward)
+        self.window.buttonBack.clicked.connect(self.back)
+        #self.window.buttonLoadFile.clicked.connect(self.loadFile)
+    def forward(self):
+        if self.window.tabWidget.currentIndex() < self.window.tabWidget.count() - 2:
+            self.window.tabWidget.setCurrentIndex(self.window.tabWidget.currentIndex() + 1)
 
-        self.window.buttonLoadFile.clicked.connect(self.loadFile)
-        
+    def back(self):
+        if self.window.tabWidget.currentIndex() > 0:
+            self.window.tabWidget.setCurrentIndex(self.window.tabWidget.currentIndex() - 1)
+
+    def openAddPatientPage(self):
+        self.window.buttonBack.setVisible(False)
+        self.window.buttonForward.setVisible(False)
+        self.window.tabWidget.setCurrentIndex(3)
+
+    def completePatientAdding(self):
+        self.window.buttonBack.setVisible(True)
+        self.window.buttonForward.setVisible(True)
+        self.window.tabWidget.setCurrentIndex(0)
+
+        self.window.lineEditSurname.clear(),
+        self.window.lineEditName.clear(),
+        self.window.lineEditPatronymic.clear(),
+        self.window.dateEdit.clear(),
+        self.window.radioButtonMale.setChecked(True)
+
     def initPageStartAnalyze(self):
-
+        pass
+        """
         #label
         self.window.labelSurname_2.hide()
         self.window.labelName_2.hide()
@@ -72,7 +97,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.window.patronymicPatient.hide()
         self.window.datePatient.hide()
         self.window.genderPatient.hide()
-
+        """
         
     def selectionChanged(self, item):
         
@@ -100,7 +125,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.window.datePatient.setText(items[5])
             self.window.genderPatient.setText(items[6])
 
-            self.window.buttonDownFile.setEnabled(True)
+            #self.window.buttonDownFile.setEnabled(True)
 
     def search(self):
         for i in range(self.window.tablePatient.rowCount()):

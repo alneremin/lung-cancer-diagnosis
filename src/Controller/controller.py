@@ -42,21 +42,34 @@ class Controller(QObject):
         self.authorizationWindow.window.buttonEntrance.clicked.connect(self.authorization)
         self.authorizationWindow.aut.authorizeSignal.connect(self.authorization)
 
-        self.mainWindow.window.buttonExit.clicked.connect(self.exit)
+        #self.mainWindow.window.buttonExit.clicked.connect(self.exit)
         self.mainWindow.window.buttonAddPatientInDB.clicked.connect(self.addPatient)
-        self.mainWindow.window.buttonAddPatientInDB.clicked.connect(lambda: self.mainWindow.window.tabWidget.setCurrentIndex(0))
+        self.mainWindow.window.buttonAddPatientInDB.clicked.connect(self.mainWindow.completePatientAdding)
+        self.mainWindow.window.buttonCancelAddPatient.clicked.connect(self.mainWindow.completePatientAdding)
         self.mainWindow.window.buttonStartAnalyze.clicked.connect(self.startAnalyze)
         self.mainWindow.window.saveDB.clicked.connect(self.saveResults)
+        
+        self.mainWindow.window.menuBar.triggered.connect(self.menuTriggered)
+    
     def exit(self):
         self.mainWindow.close()
         self.authorizationWindow.show()
     
+    def menuTriggered(self, action):
+        actions = {
+            'Загрузить': self.mainWindow.loadFile,
+            'Выйти': self.exit
+        }
+        
+        actions[action.text()]()
+
     def authorization(self):
         user = self.authorizationWindow.window.userName.text()
         password = self.authorizationWindow.window.userPassword.text()
         if self.db.authorize(user, password):
             self.authorizationWindow.close()
-            self.mainWindow.window.User.setText(user)
+            self.mainWindow.setWindowTitle(user + ": Система меддиагностики")
+            #self.mainWindow.window.User.setText(user)
             self.mainWindow.show()
         else:
             msg = QMessageBox()
@@ -88,7 +101,8 @@ class Controller(QObject):
             self.mainWindow.window.lineEditSurname.text(),
             self.mainWindow.window.lineEditName.text(),
             self.mainWindow.window.lineEditPatronymic.text(),
-            self.mainWindow.window.dateEdit.text()
+            self.mainWindow.window.dateEdit.text(),
+            'm' if self.mainWindow.window.radioButtonMale.isChecked() else 'f'
         ]
         
         res = self.db.addPatient(data)
@@ -138,6 +152,8 @@ class Controller(QObject):
 
     def saveResults(self):
         cur = self.mainWindow.window.tablePatient.currentRow()
+        if cur < 0:
+            return
         data = [
             self.mainWindow.window.tablePatient.item(cur, 1).text(),
             self.mainWindow.window.textEditResult.toPlainText(),
