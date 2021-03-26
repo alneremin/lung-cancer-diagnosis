@@ -1,7 +1,7 @@
 import sys
 import os
 from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtCore import Qt, QPoint,QSize
+from PyQt5.QtCore import Qt, QPoint, QSize, QDate
 from PyQt5.QtGui import QIcon, QFont, QColor
 from PyQt5.QtWidgets import (
     QApplication,
@@ -12,14 +12,16 @@ from PyQt5.QtWidgets import (
     QFileDialog
 )
 from Window.mainWindow import Ui_MainWindow
+from Window.mpl import MplCanvas
 from datetime import datetime
 import logging
 
+
 logger = logging.getLogger('log02')
 
-class MainWindow(QtWidgets.QMainWindow):
+class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
     def __init__(self, model, controller):
-        super(MainWindow, self).__init__()
+        super(self.__class__, self).__init__()
         self.window = Ui_MainWindow()
         self.window.setupUi(self)
 
@@ -40,11 +42,21 @@ class MainWindow(QtWidgets.QMainWindow):
         # соединяем слоты с сигналами 
         self.connectSignalsWithSlots()
 
+        # нарисуем график и добавим его в QHBoxLayout
+        self.canvas = MplCanvas()      
+        self.window.horizontalLayout_7.addWidget(self.canvas)
 
     def connectSignalsWithSlots(self):
 
         # при нажатии на кнопку "Добавить пациента" переходим на страницу добавления
         self.window.buttonAddPatient.clicked.connect(self.openAddPatientPage)
+
+        # при нажатии на кнопку "Изменить пациента" переходим на страницу изменения
+        self.window.buttonEditPatient.clicked.connect(self.openEditPatientPage)
+
+        # при нажатии на кнопку "Удалить" удаляем данные о пациенте
+        self.window.buttonDeletePatient.clicked.connect(self.removePatient)
+        
         # при нажатии на кнопку "Далее" перелистываем страницу ->
         self.window.buttonForward.clicked.connect(self.forward)
         # при нажатии на кнопку "Назад" перелистываем страницу <-
@@ -55,7 +67,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.window.tablePatient.selectionModel().currentChanged.connect(self.selectionChanged)
 
         # при нажатии на кнопку "Создать пациента" добавляем его в БД
-        self.window.buttonAddPatientInDB.clicked.connect(self.controller.addPatient)
+        self.window.buttonAddPatientInDB.clicked.connect(self.addPatient)
 
         # при переходе со страницы Добавления пациента вызываем метод completePatientAdding
         self.window.buttonAddPatientInDB.clicked.connect(self.completePatientAdding)
@@ -126,6 +138,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.window.tablePatient.setRowCount(0)
         for row in data:
             self.addRowInTable(row)
+
+        item = self.window.tablePatient.item(0, 0)
+        self.window.tablePatient.setCurrentItem(item)
+        self.selectionChanged(item)
             #self.mainWindow.window.tablePatient.insertRow(self.mainWindow.window.tablePatient.rowCount())
             #model = self.mainWindow.window.tablePatient.selectionModel()
             #model.insertRow(0)#.addItem(" ".join(row[1:4]))
@@ -179,6 +195,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def openAddPatientPage(self):
         self.window.buttonBack.setVisible(False)
         self.window.buttonForward.setVisible(False)
+        self.window.buttonAddPatientInDB.setText('Добавить')
         self.window.tabWidget.setCurrentIndex(3)
 
     def completePatientAdding(self):
@@ -191,7 +208,62 @@ class MainWindow(QtWidgets.QMainWindow):
         self.window.lineEditPatronymic.clear(),
         self.window.dateEdit.clear(),
         self.window.radioButtonMale.setChecked(True)
+    
+    def addPatient(self):
+        params = {
+            'Добавить': [],
+            'Изменить': [self.window.tablePatient.item(self.window.tablePatient.currentRow(), 1).text()]
+        }
+        self.controller.addPatient(*params[self.window.buttonAddPatientInDB.text()])
 
+    """
+        # Релактирование данных о пациенте
+    """
+
+    def openEditPatientPage(self):
+
+        if self.window.tablePatient.currentRow() == -1:
+            msgBox = QMessageBox()
+            msgBox.setWindowTitle("Внимание")
+            msgBox.setText("Выберите пациента")
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.setIcon(QMessageBox.Warning)
+            msgBox.setDefaultButton(QMessageBox.Ok)
+            msgBox.exec()
+            return
+
+        self.window.lineEditSurname.setText(self.window.surnamePatient.text())
+        self.window.lineEditName.setText(self.window.namePatient.text())
+        self.window.lineEditPatronymic.setText(self.window.patronymicPatient.text())
+        self.window.dateEdit.setDate(QDate.fromString(self.window.datePatient.text(), 'dd.MM.yyyy'))
+        #if self.window.genderPatient.text() == 'm':
+        self.window.radioButtonMale.setChecked(self.window.genderPatient.text() == 'm')
+        #else:
+        #    self.window.radioButtonFemale.setChecked(True)
+
+        self.window.buttonBack.setVisible(False)
+        self.window.buttonForward.setVisible(False)
+        self.window.buttonAddPatientInDB.setText('Изменить')
+        self.window.tabWidget.setCurrentIndex(3)
+
+    """
+    # Удаление данных о пациенте
+    """
+
+    def removePatient(self):
+
+        if self.window.tablePatient.currentRow() == -1:
+            msgBox = QMessageBox()
+            msgBox.setWindowTitle("Внимание")
+            msgBox.setText("Выберите пациента")
+            msgBox.setStandardButtons(QMessageBox.Ok)
+            msgBox.setIcon(QMessageBox.Warning)
+            msgBox.setDefaultButton(QMessageBox.Ok)
+            msgBox.exec()
+            return
+
+        if self.controller.removePatient(self.window.tablePatient.item(self.window.tablePatient.currentRow(),1).text()):
+            self.window.tablePatient.removeRow(self.window.tablePatient.currentRow())
 
     """
         # Анализ данных
@@ -256,6 +328,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.writeAnalyzeInLog(logs[item])
         elif type(item) == str:
             self.window.textEditResult.setText('Lung cancer class: ' + item)
+            self.canvas.draw_img(self.window.labelFilePath.text())
             self.window.progressAnalyze.setValue(100)
             self.window.buttonStartAnalyze.setEnabled(True)
             self.window.tabWidget.setCurrentIndex(2)
@@ -324,10 +397,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def aboutProgram(self):
         msgBox = QMessageBox()
-        msgBox.setWindowTitle("Система медицинской диагностики")
+        msgBox.setWindowTitle("О программе")
         #msgBox.setText("Система медицинской диагностики")
-        msgBox.setText("Проект подразумевает создание программного продукта, который позволит по снимкам CT " + 
-               "определить тип и стадию рака легкого. Предполагаемая архитектура нейронной сети - VGG16")
+        msgBox.setText("Программа (альфа-версия) предназначена для \
+классификации злокачественных образований, наблюдающихся при раке легкого. \
+Для удобства работы в программе реализован пользовательский интерфейс. \
+В прилагающейся БД программа хранит данные для авторизации, данные о \
+пациентах и результаты анализов. Пользователь загружает КT-снимок, \
+соотнося его с информацией о пациенте. Классификатор обрабатывает снимок и выводит тип злокачественной опухоли.")
         msgBox.setStandardButtons(QMessageBox.Ok)
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setDefaultButton(QMessageBox.Ok)

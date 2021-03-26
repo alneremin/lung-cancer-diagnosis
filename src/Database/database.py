@@ -80,7 +80,34 @@ class Database:
             logger.error("Database Error: %s", self.db.lastError().databaseText())
         return res
 
-    def saveIn(self, data):
+    def editPatient(self, data, id):
+
+        query = QSqlQuery()
+        res = query.exec(
+            f"""
+            UPDATE Patient SET surname='{data[0]}', name='{data[1]}', patronym='{data[2]}', date_of_birth='{data[3]}', sex='{data[4]}'
+            WHERE id={id}
+            """
+        )
+        if not res:
+            logger.error("Database Error: %s", self.db.lastError().databaseText())
+        return res
+
+    def removePatient(self, _id):
+
+        #id = str(id)
+        print(_id)
+        query = QSqlQuery()
+        res = query.exec(
+            f"""
+            DELETE FROM Patient WHERE id={_id}
+            """
+        )
+        if not res:
+            logger.error("Database Error: %s", self.db.lastError().databaseText())
+        return res
+
+    def saveAnalyze(self, data):
         query = QSqlQuery()
         insertQuery = f"""
                     INSERT INTO Analysis (patient, result, image_dcm, image_jpg)

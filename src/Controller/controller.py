@@ -58,15 +58,21 @@ class MIAController(QObject):
         # РАБОТА С МОДЕЛЬЮ ДАННЫХ (БД)
     """
 
-    def addPatient(self):
+    def addPatient(self, _id=None):
         data = self.views['MainWindow'].getNewPatientData()
-        res = self.model.addPatient(data)
+        if _id is None:
+            res = self.model.addPatient(data)
+        else:
+            res = self.model.editPatient(data, _id)
         self.views['MainWindow'].fillTable()
 
     def saveResults(self):
         data = self.views['MainWindow'].getResultData()
-        isSaved = self.model.saveIn(data)
+        isSaved = self.model.saveAnalyze(data)
         self.views['MainWindow'].dataIsSaved(isSaved)
+
+    def removePatient(self, _id):
+        return self.model.removePatient(_id)
 
     """
         # etc
