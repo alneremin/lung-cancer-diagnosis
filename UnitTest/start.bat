@@ -1,0 +1,2 @@
+python testBd.py
+pause
