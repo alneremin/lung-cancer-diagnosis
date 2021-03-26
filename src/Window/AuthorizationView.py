@@ -10,33 +10,51 @@ class Authorize(QObject):
     authorizeSignal = pyqtSignal()
 
 class AuthorizationWindow(QtWidgets.QMainWindow):
-    def __init__(self):
+    def __init__(self, model, controller):
         super(AuthorizationWindow, self).__init__()
         _translate = QtCore.QCoreApplication.translate
         self.window = Ui_authorization()
         self.window.setupUi(self)
-        self.aut = Authorize()
-        #self.setWindowFlag(Qt.FramelessWindowHint)
-        #self.setWindowFlag(Qt.WindowStaysOnTopHint)
-        #self.window.tabBar.hide()
-        #self.window.buttonClose.setText("{}".format('X'))
-        #self.window.buttonInfo.setText("{}".format('?'))
-        self.signalButtonClicked()
+        self.model = model
+        self.controller = controller
+        self.controller.setView(self, 'AuthorizationWindow')
 
-    def signalButtonClicked(self):
-        pass
-        #self.window.buttonClose.clicked.connect(self.closeWindow)
+        self.initAll()
+        
 
-    def closeWindow(self):
+    aut = Authorize()
+
+    def initAll(self):
+        self.window.buttonEntrance.clicked.connect(self.authorize)
+        self.aut.authorizeSignal.connect(self.authorize)
+        self.show()
+
+    def authorize(self):
+        user = self.window.userName.text()
+        password = self.window.userPassword.text()
+        if self.model.authorize(user, password):
+            self.controller.startWork(user)
+        else:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Information)
+            msg.setText("Invalid user or password")
+            #msg.setInformativeText('More information')
+            msg.setWindowTitle("Attention!")
+            msg.exec_()
+
+    """
+    def closeEvent(self, event):
         reply = QMessageBox.question(self,
                                      "Message",
                                      "Вы точно хотите закрыть приложение?",
                                      QMessageBox.Yes | QMessageBox.No,
                                      QMessageBox.No)
         if reply == QMessageBox.Yes:
-            QtWidgets.QApplication.quit()
+            self.model.close()
+            event.accept()
         else:
-            pass
+            event.ignore()
+    """
     
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Return:

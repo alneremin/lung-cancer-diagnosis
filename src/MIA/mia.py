@@ -13,6 +13,7 @@ class MIA:
         self.path = path
         self.model = None
         self.categories = ['A', 'B', 'E', 'G']
+        self.work = False 
 
     def loadModel(self):
         if self.model is None:

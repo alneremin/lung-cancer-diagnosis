@@ -550,14 +550,21 @@ QTabBar::tab{
     </property>
     <addaction name="actionLoad"/>
    </widget>
-   <widget class="QMenu" name="menu">
+   <widget class="QMenu" name="menuUser">
     <property name="title">
      <string>Пользователь</string>
     </property>
     <addaction name="actionQuit"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Справка</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
    <addaction name="menuFile"/>
-   <addaction name="menu"/>
+   <addaction name="menuUser"/>
+   <addaction name="menuHelp"/>
   </widget>
   <action name="actionLoad">
    <property name="text">
@@ -572,6 +579,11 @@ QTabBar::tab{
   <action name="actionAddPatient">
    <property name="text">
     <string>Добавить</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>О программе</string>
    </property>
   </action>
  </widget>

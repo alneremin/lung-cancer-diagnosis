@@ -1,140 +1,40 @@
-from PyQt5 import QtWidgets, QtGui
-from PyQt5.QtCore import QSettings, QObject, pyqtSignal
-from PyQt5.QtWidgets import (
-    QApplication,
-    QMainWindow,
-    QMessageBox,
-    QTableWidget,
-    QTableWidgetItem,
-)
-from Window.initAuthorizationWindow import AuthorizationWindow
-from Window.initMainWindow import MainWindow
-from Database.database import Database
+from PyQt5.QtCore import QObject, pyqtSignal
+
 from MIA.mia import MIA
 import threading
-from queue import Queue
-import time
-from io import BytesIO
-from PIL import Image
 import traceback
 import logging
 
-class Controller(QObject):
-    def __init__(self):
-        super(Controller, self).__init__()
-        self.authorizationWindow = AuthorizationWindow()
-        self.authorizationWindow.show()
-        self.mainWindow = MainWindow()
-        self.settings = QSettings('settings.conf', QSettings.IniFormat)
-        self.settings.setIniCodec("UTF-8")
-        self.db = Database(self.settings.value('driver'), self.settings.value('db_path'))
-        self.db.createConnection()
-        self.mia = MIA(self.settings.value('model_path'))
-        #self.q = Queue()
-        
-        self.inProgress.connect(self.changeProgressBar)
-        self.fillTable()
-        self.controllClicked()
+class MIAController(QObject):
+    def __init__(self, model, networkPath):
+        super(MIAController, self).__init__()
+        self.model = model
+        self.mia = MIA(networkPath)
+        self.views = {}
 
     inProgress = pyqtSignal(list)
 
-    def controllClicked(self):
-        self.authorizationWindow.window.buttonEntrance.clicked.connect(self.authorization)
-        self.authorizationWindow.aut.authorizeSignal.connect(self.authorization)
+    def setView(self, view, name):
+        self.views[name] = view
 
-        #self.mainWindow.window.buttonExit.clicked.connect(self.exit)
-        self.mainWindow.window.buttonAddPatientInDB.clicked.connect(self.addPatient)
-        self.mainWindow.window.buttonAddPatientInDB.clicked.connect(self.mainWindow.completePatientAdding)
-        self.mainWindow.window.buttonCancelAddPatient.clicked.connect(self.mainWindow.completePatientAdding)
-        self.mainWindow.window.buttonStartAnalyze.clicked.connect(self.startAnalyze)
-        self.mainWindow.window.saveDB.clicked.connect(self.saveResults)
-        
-        self.mainWindow.window.menuBar.triggered.connect(self.menuTriggered)
-    
     def exit(self):
-        self.mainWindow.close()
-        self.authorizationWindow.show()
-    
-    def menuTriggered(self, action):
-        actions = {
-            'Загрузить': self.mainWindow.loadFile,
-            'Выйти': self.exit
-        }
-        
-        actions[action.text()]()
+        if self.views['MainWindow'].close():
+            self.views['AuthorizationWindow'].show()
 
-    def authorization(self):
-        user = self.authorizationWindow.window.userName.text()
-        password = self.authorizationWindow.window.userPassword.text()
-        if self.db.authorize(user, password):
-            self.authorizationWindow.close()
-            self.mainWindow.setWindowTitle(user + ": Система меддиагностики")
-            #self.mainWindow.window.User.setText(user)
-            self.mainWindow.show()
-        else:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Information)
-            msg.setText("Invalid user or password")
-            #msg.setInformativeText('More information')
-            msg.setWindowTitle("Attention!")
-            msg.exec_()
 
-    def fillTable(self):
-        data = self.db.getPatients()
-        #currentRow = self.mainWindow.window.tablePatient.currentRow()
-        self.mainWindow.window.tablePatient.setRowCount(0)
-        for row in data:
-            self.addRowInTable(row)
-            #self.mainWindow.window.tablePatient.insertRow(self.mainWindow.window.tablePatient.rowCount())
-            #model = self.mainWindow.window.tablePatient.selectionModel()
-            #model.insertRow(0)#.addItem(" ".join(row[1:4]))
-        #self.mainWindow.window.tablePatient.setCurrentCell(currentRow, 0)
+    def startWork(self, user):
+        self.views['AuthorizationWindow'].close()
+        self.views['MainWindow'].setWindowTitle(user + ": Система меддиагностики")
+        self.views['MainWindow'].show()
 
-    def addRowInTable(self, rowData):
-        rows = self.mainWindow.window.tablePatient.rowCount()
-        self.mainWindow.window.tablePatient.setRowCount(rows + 1)
-        for j in range(len(rowData)):
-            self.mainWindow.window.tablePatient.setItem(rows, j, QTableWidgetItem(rowData[j]))
+    """
+        # РАБОТА НЕЙРОСЕТИ
+    """
 
-    def addPatient(self):
-        data = [
-            self.mainWindow.window.lineEditSurname.text(),
-            self.mainWindow.window.lineEditName.text(),
-            self.mainWindow.window.lineEditPatronymic.text(),
-            self.mainWindow.window.dateEdit.text(),
-            'm' if self.mainWindow.window.radioButtonMale.isChecked() else 'f'
-        ]
-        
-        res = self.db.addPatient(data)
-        if res:
-            print("insert")
-        else:
-            print("no insert")
-        self.fillTable()
-
-    def startAnalyze(self):
-
-        self.mainWindow.window.progressAnalyze.setFormat('Load model...')
-        
-        x1 = threading.Thread(target=self.analyze, args=(self.mainWindow.window.labelFilePath.text(),))
+    def startAnalyze(self, filePath):
+        self.mia.work = True
+        x1 = threading.Thread(target=self.analyze, args=(filePath,))
         x1.start()
-
-    def changeProgressBar(self, item):
-        item = item[0]
-
-        data = {
-            0 : 'Classify...',
-            1 : 'Completed',
-            2 : 'Classification error!',
-            3 : 'Loading error!',
-            4 : 'Loading error!'
-        }
-
-        if type(item) == int:
-            self.mainWindow.window.progressAnalyze.setFormat(data[item])
-        elif type(item) == str:
-            self.mainWindow.window.textEditResult.setText('Lung cancer class: ' + item)
-            self.mainWindow.window.tabWidget.setCurrentIndex(3)
 
     def analyze(self, filePath):
         loaded = self.mia.loadModel()
@@ -150,21 +50,29 @@ class Controller(QObject):
         else:
             self.inProgress.emit([3])
 
-    def saveResults(self):
-        cur = self.mainWindow.window.tablePatient.currentRow()
-        if cur < 0:
-            return
-        data = [
-            self.mainWindow.window.tablePatient.item(cur, 1).text(),
-            self.mainWindow.window.textEditResult.toPlainText(),
-            bytearray(0),
-            self.image_to_byte_array()
-        ]
-        self.db.saveIn(data)
+        self.mia.work = False
 
-    def image_to_byte_array(self):
+    """
+        # РАБОТА С МОДЕЛЬЮ ДАННЫХ (БД)
+    """
+
+    def addPatient(self):
+        data = self.views['MainWindow'].getNewPatientData()
+        res = self.model.addPatient(data)
+        self.views['MainWindow'].fillTable()
+
+    def saveResults(self):
+        data = self.views['MainWindow'].getResultData()
+        isSaved = self.model.saveIn(data)
+        self.views['MainWindow'].dataIsSaved(isSaved)
+
+    """
+        # etc
+    """
+
+    def image_to_byte_array(self, path):
         try:
-            with open(self.mainWindow.window.labelFilePath.text(), "rb") as image:
+            with open(path, "rb") as image:
               f = image.read()
               b = bytearray(f)
               return b

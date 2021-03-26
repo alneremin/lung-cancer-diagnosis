@@ -29,19 +29,6 @@ class Database:
         if self.db.isOpen():
             self.db.close()
 
-    def findByName(self, name):
-        data = []
-        query = QSqlQuery()
-        data_count = 6
-        query.exec(
-          f"SELECT id, surname, name, patronym, date_of_birth, sex FROM Patient WHERE surname= {name}"
-        )
-        ident, surname, name, patronym, date_of_birth, sex = range(data_count)
-        while query.next():
-            data.append([query.value(i) for i in range(data_count)])
-        query.finish()
-        return data
-
     def authorize(self, user, password):
         query = QSqlQuery()
         query.exec(
@@ -90,6 +77,10 @@ class Database:
         query.bindValue(":result", data[1])
         query.bindValue(":image_dcm", data[2])
         query.bindValue(":image_jpg", data[3])
-        query.exec()
+        res = query.exec()
 
         query.finish()
+        return res
+        
+    def __del__(self):
+        self.close()
