@@ -2,8 +2,9 @@ from PyQt5.QtCore import QObject, pyqtSignal
 
 from MIA.mia import MIA
 import threading
-import traceback
 import logging
+
+logger = logging.getLogger('log02')
 
 class MIAController(QObject):
     def __init__(self, model, networkPath):
@@ -33,6 +34,7 @@ class MIAController(QObject):
 
     def startAnalyze(self, filePath):
         self.mia.work = True
+        logger.info("Запускается поток для анализа для работы нейросети")
         x1 = threading.Thread(target=self.analyze, args=(filePath,))
         x1.start()
 
@@ -41,10 +43,10 @@ class MIAController(QObject):
 
         if loaded:
             self.inProgress.emit([0])
-            res = self.mia.classify(filePath)
-            if len(res) > 0:
+            classifed, result = self.mia.classify(filePath)
+            if classifed:
                 self.inProgress.emit([1])
-                self.inProgress.emit([res])
+                self.inProgress.emit([result])
             else:
                 self.inProgress.emit([2])
         else:
@@ -77,5 +79,5 @@ class MIAController(QObject):
               b = bytearray(f)
               return b
         except Exception as e:
-            logging.error(traceback.format_exc())
+            logger.exception('Не удалось сохранить в битовом формате файл: %s', path)
             return bytearray(0)

@@ -9,15 +9,23 @@ from Window.AuthorizationView import AuthorizationWindow
 from Window.MainView import MainWindow
 from Database.database import Database
 
+import logging
+import logging.config
+
+logging.config.fileConfig(fname='log.conf', disable_existing_loggers=False)
+
+logger = logging.getLogger('log02')
 
 if __name__ == "__main__":
+
     app = QApplication([])
 
     settings = QSettings('settings.conf', QSettings.IniFormat)
     settings.setIniCodec("UTF-8")
     
     db = Database(settings.value('driver'), settings.value('db_path'))
-    db.createConnection()
+    if not db.createConnection():
+        sys.exit(1)
 
     networkPath = settings.value('model_path')
     controller = MIAController(db, networkPath)

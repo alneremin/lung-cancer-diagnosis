@@ -4,8 +4,10 @@ from keras.preprocessing import image
 from keras.models import load_model
 import matplotlib.pyplot as plt
 import numpy as np
-import traceback
+
 import logging
+
+logger = logging.getLogger('log02')
 
 class MIA:
 
@@ -21,7 +23,7 @@ class MIA:
                 self.model = load_model(self.path)
                 return True
             except Exception as e:
-                logging.error(traceback.format_exc())
+                logger.exception('Не удалось загрузить модель нейросети')
                 return False
         return True
 
@@ -30,11 +32,11 @@ class MIA:
         try:
             lung = image.load_img(img,target_size=(224,224))
         except Exception as e:
-            logging.error(traceback.format_exc())
-            return ''
+            logger.exception('Не удалось загрузить КТ-снимок')
+            return False, ''
         lung = np.asarray(lung)
         #plt.imshow(lung)
         lung = np.expand_dims(lung, axis=0)
         pred = self.model.predict(lung)
-        return self.categories[np.argmax(pred[0])]
+        return True, self.categories[np.argmax(pred[0])]
         #print([round(i) for i in output[0]])

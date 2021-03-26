@@ -3,6 +3,11 @@ import sys
 import os
 from PyQt5.QtSql import QSqlDatabase, QSqlQuery
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import QFile
+
+import logging
+
+logger = logging.getLogger('log02')
 
 class Database:
     def __init__(self, driver, path):
@@ -12,18 +17,24 @@ class Database:
 
     def createConnection(self):
         self.db = QSqlDatabase.addDatabase(self.driver)
-        self.open()
+        return self.open()
 
     def open(self):
         self.db.setDatabaseName(self.path)
-        if not self.db.open():
-            QMessageBox.critical(
+        if not QFile(self.path).exists():
+            logger.error('Database file doesn\'t exists: %s', self.path)
+            return False
+        """
+        QMessageBox.critical(
               None,
               "App Name - Error!",
               "Database Error: %s" % self.db.lastError().databaseText(),
             )
-            return False
-        return True
+        """
+        isOpened = self.db.open()
+        if not isOpened:
+            logger.error("Database Error: %s", self.db.lastError().databaseText())
+        return isOpened
 
     def close(self):
         if self.db.isOpen():
@@ -38,6 +49,7 @@ class Database:
             query.finish()
             return True
         query.finish()
+        logger.warning("Не удалось найти записи в БД для авторизации")
         return False
         
 
@@ -64,6 +76,8 @@ class Database:
             VALUES ('{data[0]}', '{data[1]}', '{data[2]}', '{data[3]}', '{data[4]}', '', '', '', '')
             """
         )
+        if not res:
+            logger.error("Database Error: %s", self.db.lastError().databaseText())
         return res
 
     def saveIn(self, data):
@@ -78,9 +92,11 @@ class Database:
         query.bindValue(":image_dcm", data[2])
         query.bindValue(":image_jpg", data[3])
         res = query.exec()
+        if not res:
+            logger.error("Database Error: %s", self.db.lastError().databaseText())
 
         query.finish()
         return res
-        
+
     def __del__(self):
         self.close()

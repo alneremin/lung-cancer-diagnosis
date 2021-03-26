@@ -12,8 +12,10 @@ from PyQt5.QtWidgets import (
     QFileDialog
 )
 from Window.mainWindow import Ui_MainWindow
-import traceback
+from datetime import datetime
 import logging
+
+logger = logging.getLogger('log02')
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, model, controller):
@@ -100,8 +102,10 @@ class MainWindow(QtWidgets.QMainWindow):
             'Выйти': self.controller.exit,
             'О программе': self.aboutProgram
         }
-        actions[action.text()]()
-
+        try:
+            actions[action.text()]()
+        except:
+            logger.exception('Не удалось найти пункт верхнего меню: %s', action.text())
 
     """
         # Работа с таблицей tablePatient
@@ -198,20 +202,31 @@ class MainWindow(QtWidgets.QMainWindow):
             with open(self.window.labelFilePath.text(), 'r') as f:
                 pass
         except Exception as e:
-            logging.error(traceback.format_exc())
+            logger.exception('Не удалось открыть КТ-снимок')
+            self.writeAnalyzeInLog(f'Ошибка чтения файла: {self.window.labelFilePath.text()}')
             QMessageBox.critical(
               None,
               "Ошибка!",
               f"Не удалось открыть файл с КТ-снимком, загрузите файл!",
             )
             return
+        self.writeAnalyzeInLog('Загрузка модели...')
+
         self.window.buttonStartAnalyze.setEnabled(False)
         self.window.progressAnalyze.setFormat('Load model...')
         self.window.progressAnalyze.setValue(33)
 
         self.controller.startAnalyze(self.window.labelFilePath.text())
 
+    def writeAnalyzeInLog(self, string):
 
+        date1 = '[' + datetime.today().strftime('%d-%m-%Y %H:%M:%S') + '] '
+        self.window.plainTextEditAnalyze.setPlainText(
+            "".join([
+                self.window.plainTextEditAnalyze.toPlainText(),
+                date1 + string
+                ]) + '\n'
+            )
     def changeProgressBar(self, item):
         item = item[0]
 
@@ -223,6 +238,14 @@ class MainWindow(QtWidgets.QMainWindow):
             4 : 'Loading error!'
         }
 
+        logs = {
+            0 : 'Классификация данных...',
+            1 : 'Работа нейросети окончена.',
+            2 : 'Выявлены ошибки при классификации. Подробнее: data.log',
+            3 : 'Выявлены ошибки при загрузке модели. Подробнее: data.log',
+            4 : 'Выявлены ошибки при загрузке модели. Подробнее: data.log'
+        }
+
         if type(item) == int:
             self.window.progressAnalyze.setFormat(data[item])
             if item in [0,1]:
@@ -230,6 +253,7 @@ class MainWindow(QtWidgets.QMainWindow):
             else:
                 self.window.progressAnalyze.setValue(0)
                 self.window.buttonStartAnalyze.setEnabled(True)
+            self.writeAnalyzeInLog(logs[item])
         elif type(item) == str:
             self.window.textEditResult.setText('Lung cancer class: ' + item)
             self.window.progressAnalyze.setValue(100)

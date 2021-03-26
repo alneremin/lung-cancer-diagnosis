@@ -62,7 +62,7 @@ QTabBar::tab{
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>1</number>
       </property>
       <property name="usesScrollButtons">
        <bool>true</bool>
@@ -320,7 +320,11 @@ QTabBar::tab{
            </layout>
           </item>
           <item>
-           <widget class="QPlainTextEdit" name="plainTextEdit"/>
+           <widget class="QPlainTextEdit" name="plainTextEditAnalyze">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>

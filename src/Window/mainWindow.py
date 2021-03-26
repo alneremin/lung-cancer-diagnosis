@@ -157,9 +157,10 @@ class Ui_MainWindow(object):
         self.progressAnalyze.setObjectName("progressAnalyze")
         self.horizontalLayout_4.addWidget(self.progressAnalyze)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
-        self.plainTextEdit = QtWidgets.QPlainTextEdit(self.Analyze)
-        self.plainTextEdit.setObjectName("plainTextEdit")
-        self.verticalLayout.addWidget(self.plainTextEdit)
+        self.plainTextEditAnalyze = QtWidgets.QPlainTextEdit(self.Analyze)
+        self.plainTextEditAnalyze.setReadOnly(True)
+        self.plainTextEditAnalyze.setObjectName("plainTextEditAnalyze")
+        self.verticalLayout.addWidget(self.plainTextEditAnalyze)
         self.verticalLayout_4.addLayout(self.verticalLayout)
         self.tabWidget.addTab(self.Analyze, "")
         self.resultAnalyze = QtWidgets.QWidget()
@@ -284,7 +285,7 @@ class Ui_MainWindow(object):
         self.menuBar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
