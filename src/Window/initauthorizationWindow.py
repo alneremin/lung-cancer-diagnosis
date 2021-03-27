@@ -1,9 +1,13 @@
 import sys
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import Qt, QPoint,QSize
+from PyQt5.QtCore import Qt, QPoint,QSize, pyqtSignal, QObject
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMessageBox
-from window.authorizationWindow import Ui_authorization
+from Window.authorizationWindow import Ui_authorization
+
+class Authorize(QObject):
+
+    authorizeSignal = pyqtSignal()
 
 class AuthorizationWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -11,16 +15,19 @@ class AuthorizationWindow(QtWidgets.QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.window = Ui_authorization()
         self.window.setupUi(self)
-        self.setWindowFlag(Qt.FramelessWindowHint)
-        self.setWindowFlag(Qt.WindowStaysOnTopHint)
-        self.window.button_close.setText("{}".format('X'))
-        self.window.button_info.setText("{}".format('?'))
-        self.signal_button_clicked()
+        self.aut = Authorize()
+        #self.setWindowFlag(Qt.FramelessWindowHint)
+        #self.setWindowFlag(Qt.WindowStaysOnTopHint)
+        #self.window.tabBar.hide()
+        #self.window.buttonClose.setText("{}".format('X'))
+        #self.window.buttonInfo.setText("{}".format('?'))
+        self.signalButtonClicked()
 
-    def signal_button_clicked(self):
-        self.window.button_close.clicked.connect(self.close_window)
+    def signalButtonClicked(self):
+        pass
+        #self.window.buttonClose.clicked.connect(self.closeWindow)
 
-    def close_window(self):
+    def closeWindow(self):
         reply = QMessageBox.question(self,
                                      "Message",
                                      "Вы точно хотите закрыть приложение?",
@@ -30,7 +37,12 @@ class AuthorizationWindow(QtWidgets.QMainWindow):
             QtWidgets.QApplication.quit()
         else:
             pass
-        
+    
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Return:
+            self.aut.authorizeSignal.emit()
+        event.accept()
+
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.__press_pos = event.pos()  
