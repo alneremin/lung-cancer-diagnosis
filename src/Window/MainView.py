@@ -76,14 +76,8 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
         # при нажатии на "Анализ" начинаем анализ данных
         self.window.buttonStartAnalyze.clicked.connect(self.startAnalyze)
 
-        # при нажатии на "Сохранить в БД" вызываем saveResults
-        self.window.saveDB.clicked.connect(self.controller.saveResults)
-        
         # ставим обработчик триггеров верхнего меню
         self.window.menuBar.triggered.connect(self.menuTriggered)
-
-        # реагируем на все изменения в течение работы анализатора 
-        self.controller.inProgress.connect(self.changeProgressBar)
 
 
     def forward(self):
@@ -129,7 +123,6 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
         self.window.tablePatient.horizontalHeader().hide()
         for i in range(1,7):
             self.window.tablePatient.setColumnHidden(i, True)
-        self.fillTable()
 
 
     def fillTable(self):

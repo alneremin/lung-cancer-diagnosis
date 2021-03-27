@@ -395,6 +395,9 @@ QTabBar::tab{
               <property name="styleSheet">
                <string notr="true">background: white</string>
               </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
            </layout>

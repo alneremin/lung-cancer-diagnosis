@@ -26,7 +26,16 @@ class MIAController(QObject):
     def startWork(self, user):
         self.views['AuthorizationWindow'].close()
         self.views['MainWindow'].setWindowTitle(user + ": Система меддиагностики")
+        self.connectWithMainWindow()
+        self.views['MainWindow'].fillTable()
         self.views['MainWindow'].show()
+
+    def connectWithMainWindow(self):
+        # при нажатии на "Сохранить в БД" вызываем saveResults
+        self.views['MainWindow'].window.saveDB.clicked.connect(self.saveResults)
+        
+        # реагируем на все изменения в течение работы анализатора 
+        self.inProgress.connect(self.views['MainWindow'].changeProgressBar)
 
     """
         # РАБОТА НЕЙРОСЕТИ

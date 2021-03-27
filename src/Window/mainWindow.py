@@ -194,6 +194,7 @@ class Ui_MainWindow(object):
         self.textEditResult = QtWidgets.QTextEdit(self.resultAnalyze)
         self.textEditResult.setMinimumSize(QtCore.QSize(400, 0))
         self.textEditResult.setStyleSheet("background: white")
+        self.textEditResult.setReadOnly(True)
         self.textEditResult.setObjectName("textEditResult")
         self.horizontalLayout_7.addWidget(self.textEditResult)
         self.verticalLayout_5.addLayout(self.horizontalLayout_7)

@@ -62,7 +62,7 @@ class Database:
         )
         while query.next():
             data.append([str(query.value(i)) for i in range(data_count)]) 
-            data[-1] = [" ".join(data[-1][1:3])] + data[-1]
+            data[-1] = [" ".join(data[-1][1:4])] + data[-1]
         query.finish()
 
         return data
