@@ -1,3 +1,4 @@
+cd src
 cd Window
 rm authorizationWindow.py
 rm mainWindow.py

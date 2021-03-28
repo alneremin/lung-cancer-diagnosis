@@ -4,10 +4,13 @@ sys.path.insert(0, '../../')
 
 import unittest
 from MIA.mia import MIA
+import logging
+
+logger = logging.getLogger('log02')
+logger.disabled = True
 
 class TestMia(unittest.TestCase):
 
-   
     modelPath = ""
     preparedImage = ""
     mia = MIA(modelPath)

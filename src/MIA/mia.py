@@ -38,5 +38,6 @@ class MIA:
         #plt.imshow(lung)
         lung = np.expand_dims(lung, axis=0)
         pred = self.model.predict(lung)
+        logger.info(f"Результаты анализа: {pred[0]}")
         return True, self.categories[np.argmax(pred[0])]
         #print([round(i) for i in output[0]])

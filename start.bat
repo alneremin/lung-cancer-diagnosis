@@ -1,3 +1,4 @@
+cd src
 cd Window
 del authorizationWindow.py
 del mainWindow.py
