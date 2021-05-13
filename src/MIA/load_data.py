@@ -1,10 +1,17 @@
 
-
+"""
 from MIA.TCIA.tciaclient import TCIAClient
 from MIA.TCIA.tciaclientimpl import TCIAClientImpl
 
 from MIA.VisualizationTools.get_data_from_XML import *
 from MIA.VisualizationTools.utils import *
+"""
+from TCIA.tciaclient import TCIAClient
+from TCIA.tciaclientimpl import TCIAClientImpl
+
+from VisualizationTools.get_data_from_XML import *
+from VisualizationTools.utils import *
+
 from PIL.Image import fromarray
 import os
 import json
@@ -33,7 +40,7 @@ def split_names(names, class_list, prefix):
 # classfile="VisualizationTools\\category.txt"
 # annotation_path="Annotation\\"
 
-def download_data(classfile, path_to_download, annotation_path, patient_count, to_jpg=False):
+def download_data(classfile, path_to_download, annotation_path, patient_count, to_jpg=False, how_much_skip_patients=0):
 
     apiKey = "7ad8c98d-74f9-4ebf-a59c-c3de09550db4"
     baseUrl = "https://services.cancerimagingarchive.net/services/v3"
@@ -62,16 +69,22 @@ def download_data(classfile, path_to_download, annotation_path, patient_count, t
     patient_count_current = 0
     # для выборок train/test
     for data_type, names in patient_names_json.items():
+      
       # для каждого пациента
       for name in names:
+
         # если достигнуто ограничение по скачиванию пациентов, прерываем скачивание
         if patient_count_current >= patient_count:
           return
+        
+        if how_much_skip_patients > 0:
+          how_much_skip_patients -= 1
+          continue
 
         # формируем путь до папки со снимками пациента
         path_to_dcm = os.path.join(path_to_download, data_type, name.replace(prefix, "")[0], name)
-        if os.path.exists(path_to_dcm):
-          continue
+        #if os.path.exists(path_to_dcm):
+        #  continue
 
         patient_count_current += 1
 
@@ -126,8 +139,11 @@ def download_data(classfile, path_to_download, annotation_path, patient_count, t
 # example
 if __name__ == "__main__":
   classfile = os.path.join("VisualizationTools", "category.txt")
+  annotation_path = os.path.join("downloads", "Annotation")
   path_to_download = "downloads"
   download_data(classfile=classfile,
                 path_to_download=path_to_download,
-                patient_count=40,
-                to_jpg=False)
+                annotation_path=annotation_path,
+                patient_count=20,
+                to_jpg=False,
+                how_much_skip_patients=50)
