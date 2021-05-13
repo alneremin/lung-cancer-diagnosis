@@ -1,10 +1,10 @@
 
 
-from TCIA.tciaclient import TCIAClient
-from TCIA.tciaclientimpl import TCIAClientImpl
+from MIA.TCIA.tciaclient import TCIAClient
+from MIA.TCIA.tciaclientimpl import TCIAClientImpl
 
-from VisualizationTools.get_data_from_XML import *
-from VisualizationTools.utils import *
+from MIA.VisualizationTools.get_data_from_XML import *
+from MIA.VisualizationTools.utils import *
 from PIL.Image import fromarray
 import os
 import json
