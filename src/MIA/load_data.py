@@ -33,7 +33,7 @@ def split_names(names, class_list, prefix):
 # classfile="VisualizationTools\\category.txt"
 # annotation_path="Annotation\\"
 
-def download_data(classfile, path_to_download, patient_count, to_jpg=False):
+def download_data(classfile, path_to_download, annotation_path, patient_count, to_jpg=False):
 
     apiKey = "7ad8c98d-74f9-4ebf-a59c-c3de09550db4"
     baseUrl = "https://services.cancerimagingarchive.net/services/v3"
@@ -43,9 +43,8 @@ def download_data(classfile, path_to_download, patient_count, to_jpg=False):
     # скачиваем аннотации с ресурса
     url = "https://wiki.cancerimagingarchive.net/download/attachments/70224216/Lung-PET-CT-Dx-Annotations-XML-Files-rev10152020.zip"
     queryParameters = {"version":1, "modificationDate":1603823290007, "api":"v2"}
-    annotation_path = os.path.join("downloads", "Annotation")
     if not os.path.exists(annotation_path):
-        client_impl.download_annotation(url, queryParameters, annotation_path)
+        client_impl.download_annotation(url, queryParameters, os.path.split(annotation_path)[0])
 
     # получаем кол-во классов
     class_list = get_category(classfile)
