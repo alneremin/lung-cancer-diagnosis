@@ -323,9 +323,12 @@ class TCIAClient:
 
             print('Downloading ' + seriesInstanceUid["SeriesDate"] + '-' + seriesInstanceUid["SeriesDescription"] + '...')
             numberOfImages = len(sopInstanceUids)
+            dcm_files = list(map(lambda s: s[:-4], os.listdir(rootDirectory)))
+            print(dcm_files)
             for idx, sopInstanceUid in enumerate(sopInstanceUids):
                 print('Downloading ' + str(idx) + ' of ' + str(numberOfImages) + '...')
-
+                if sopInstanceUid in dcm_files:
+                    continue
                 """
                 print(seriesInstanceUid)
                 date_folder = seriesInstanceUid["SeriesDate"] \
@@ -344,7 +347,7 @@ class TCIAClient:
                 self.get_single_image(SeriesInstanceUID = seriesInstanceUid["SeriesInstanceUID"], 
                                       SOPInstanceUID = sopInstanceUid, 
                                       downloadPath = downloadPath, 
-                                      fileName = format(share_index, '06d') + '.dcm')
+                                      fileName = sopInstanceUid + '.dcm')
                 share_index += 1
         return share_index
     

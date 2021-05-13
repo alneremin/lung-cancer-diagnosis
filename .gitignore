@@ -16,6 +16,7 @@ build/
 develop-eggs/
 dist/
 src/downloads/
+src/MIA/downloads/
 downloads/
 eggs/
 .eggs/

@@ -15,10 +15,9 @@ import json
 def split_names(names, class_list, prefix):
     splited_names = [[] for _ in range(len(class_list))]
     for name in names:
-
       indx = class_list.index(str(name.replace(prefix, "")[0]))
       splited_names[indx].append(name)
-    # для первого запуска берем не все данные, только первые из каждой категории
+    
     x_train = []
     x_test = []
     for cat in splited_names:
@@ -34,7 +33,7 @@ def split_names(names, class_list, prefix):
 # classfile="VisualizationTools\\category.txt"
 # annotation_path="Annotation\\"
 
-def download_data(classfile, annotation_path, path_to_download, patient_count):
+def download_data(classfile, path_to_download, patient_count, to_jpg=False):
 
     apiKey = "7ad8c98d-74f9-4ebf-a59c-c3de09550db4"
     baseUrl = "https://services.cancerimagingarchive.net/services/v3"
@@ -44,8 +43,9 @@ def download_data(classfile, annotation_path, path_to_download, patient_count):
     # скачиваем аннотации с ресурса
     url = "https://wiki.cancerimagingarchive.net/download/attachments/70224216/Lung-PET-CT-Dx-Annotations-XML-Files-rev10152020.zip"
     queryParameters = {"version":1, "modificationDate":1603823290007, "api":"v2"}
+    annotation_path = os.path.join("downloads", "Annotation")
     if not os.path.exists(annotation_path):
-        client_impl.download_annotation(url, queryParameters, os.path.split(annotation_path)[0])
+        client_impl.download_annotation(url, queryParameters, annotation_path)
 
     # получаем кол-во классов
     class_list = get_category(classfile)
@@ -57,16 +57,19 @@ def download_data(classfile, annotation_path, path_to_download, patient_count):
 
     # получаем имена пациентов
     patient_names = client_impl.get_patient(client_impl.collection)
+
     patient_names_json = split_names(patient_names, class_list, prefix)
 
     patient_count_current = 0
-    # для каждого пациента выполняем скачивание его КТ-снимков
-    for data_type in patient_names_json:
-      for name in patient_names_json[data_type]:
-        
+    # для выборок train/test
+    for data_type, names in patient_names_json.items():
+      # для каждого пациента
+      for name in names:
+        # если достигнуто ограничение по скачиванию пациентов, прерываем скачивание
         if patient_count_current >= patient_count:
           return
 
+        # формируем путь до папки со снимками пациента
         path_to_dcm = os.path.join(path_to_download, data_type, name.replace(prefix, "")[0], name)
         if os.path.exists(path_to_dcm):
           continue
@@ -91,13 +94,14 @@ def download_data(classfile, annotation_path, path_to_download, patient_count):
         # получаем StudyUID пациента
         uids = client_impl.get_patient_study(client_impl.collection, name)
         
+        # для каждого снимка пациента
         for study_uid in uids:
           # по StudyUID получаем один или несколько КТ-снимков
           series_uids = client_impl.get_series(client_impl.collection,
                                           name, 
                                           study_uid
                                           )
-          
+          # если пути до папки со снимками пациента нет, создаем его
           if not os.path.exists(path_to_dcm):
             os.makedirs(path_to_dcm)
 
@@ -106,24 +110,25 @@ def download_data(classfile, annotation_path, path_to_download, patient_count):
                                             rootDirectory=path_to_dcm, 
                                             seriesInstanceUids=series_uids)
           dcm_files = os.listdir(path_to_dcm)
-          print(path_to_dcm +  "/*.dcm to " + path_to_dcm +  "/*.jpg")
-          # преобразуем dcm в jpg
-          for dcm in dcm_files:
-            if dcm[-4:] != ".dcm":
-              continue
-            path_to_dcm_file = os.path.join(path_to_dcm, dcm)
-            matrix, frame_num, width, height, ch = loadFile(path_to_dcm_file)
-            img_bitmap = MatrixToImage(matrix[0], ch)
-            img = fromarray(img_bitmap)
-            img.save(path_to_dcm_file[:-4] + ".jpg")
-            os.remove(path_to_dcm_file)
+
+          if to_jpg:
+            print(path_to_dcm +  "/*.dcm to " + path_to_dcm +  "/*.jpg")
+            # преобразуем dcm в jpg
+            for dcm in dcm_files:
+              if dcm[-4:] != ".dcm":
+                continue
+              path_to_dcm_file = os.path.join(path_to_dcm, dcm)
+              matrix, frame_num, width, height, ch = loadFile(path_to_dcm_file)
+              img_bitmap = MatrixToImage(matrix[0], ch)
+              img = fromarray(img_bitmap)
+              img.save(path_to_dcm_file[:-4] + ".jpg")
+              os.remove(path_to_dcm_file)
 
 # example
 if __name__ == "__main__":
   classfile = os.path.join("VisualizationTools", "category.txt")
-  annotation_path = os.path.join("downloads", "Annotation")
   path_to_download = "downloads"
-  download_data(classfile=classfile, 
-                annotation_path=annotation_path,
+  download_data(classfile=classfile,
                 path_to_download=path_to_download,
-                patient_count=300)
+                patient_count=40,
+                to_jpg=False)
