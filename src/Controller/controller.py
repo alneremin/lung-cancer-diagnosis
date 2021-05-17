@@ -48,18 +48,25 @@ class MIAController(QObject):
         x1.start()
 
     def analyze(self, filePath):
-        loaded = self.mia.loadModel()
-
-        if loaded:
+        
+        segm_is_loaded = self.mia.loadSegmentationModel()
+        self.inProgress.emit([4])
+        if segm_is_loaded:
+            
+            clf_is_loaded = self.mia.loadClassificationModel()
             self.inProgress.emit([0])
-            classifed, result = self.mia.classify(filePath)
-            if classifed:
-                self.inProgress.emit([1])
-                self.inProgress.emit([result])
+            segmentated, segment_img, newFilePath = self.mia.segmentify(filePath)
+            if segmentated and segm_is_loaded:
+                classifed, result = self.mia.classify(newFilePath)
+                if classifed:
+                    self.inProgress.emit([1])
+                    self.inProgress.emit([[result, segment_img]])
+                else:
+                    self.inProgress.emit([2])
             else:
-                self.inProgress.emit([2])
+                self.inProgress.emit([3])
         else:
-            self.inProgress.emit([3])
+            self.inProgress.emit([5])
 
         self.mia.work = False
 

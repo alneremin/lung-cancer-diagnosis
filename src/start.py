@@ -27,8 +27,9 @@ if __name__ == "__main__":
     if not db.createConnection():
         sys.exit(1)
 
-    networkPath = settings.value('model_path')
-    controller = MIAController(db, networkPath)
+    networkPath = settings.value('clf_model_path')
+
+    controller = MIAController(db, dict({'class' : networkPath }))
 
     authorizationWindow = AuthorizationWindow(db, controller)
     mainWindow = MainWindow(db, controller)

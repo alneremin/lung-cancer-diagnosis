@@ -1,11 +1,13 @@
 Keras~=2.4.3
 Keras-Preprocessing~=1.1.2
 matplotlib~=3.3.4
-numpy~=1.19.2
+numpy~=1.20.3
 PyQt5~=5.14.1
 PyQt5-sip~=12.8.0       
 PyQt5-stubs
 pyqt5-tools
 pytest-qt~=3.3.0
 tensorflow~=2.4.1
+SimpleITK
+git+https://github.com/JoHof/lungmask
 cx_Freeze

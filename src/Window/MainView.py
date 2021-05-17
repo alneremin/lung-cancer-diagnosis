@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import (
 )
 from Window.mainWindow import Ui_MainWindow
 from Window.mpl import MplCanvas
+import SimpleITK as sitk
 from datetime import datetime
 import logging
 
@@ -264,8 +265,9 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
     def startAnalyze(self):
 
         try:
-            with open(self.window.labelFilePath.text(), 'r') as f:
-                pass
+            a = sitk.ReadImage(self.window.labelFilePath.text())
+            if a is None:
+                raise Exception('Unable open CT-snapshot.')
         except Exception as e:
             logger.exception('Не удалось открыть КТ-снимок')
             self.writeAnalyzeInLog(f'Ошибка чтения файла: {self.window.labelFilePath.text()}')
@@ -300,7 +302,7 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
             1 : 'Completed',
             2 : 'Classification error!',
             3 : 'Loading error!',
-            4 : 'Loading error!'
+            4 : 'Segmentify...'
         }
 
         logs = {
@@ -308,7 +310,8 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
             1 : 'Работа нейросети окончена.',
             2 : 'Выявлены ошибки при классификации. Подробнее: data.log',
             3 : 'Выявлены ошибки при загрузке модели. Подробнее: data.log',
-            4 : 'Выявлены ошибки при загрузке модели. Подробнее: data.log'
+            4 : 'Сегментация данных...',
+            5 : 'Выявлены ошибки при сегментации. Подробнее: data.log',
         }
 
         if type(item) == int:
@@ -319,9 +322,9 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
                 self.window.progressAnalyze.setValue(0)
                 self.window.buttonStartAnalyze.setEnabled(True)
             self.writeAnalyzeInLog(logs[item])
-        elif type(item) == str:
-            self.window.textEditResult.setText('Lung cancer class: ' + item)
-            self.canvas.draw_img(self.window.labelFilePath.text())
+        elif type(item) == list:
+            self.window.textEditResult.setText('Lung cancer class: ' + item[0])
+            self.canvas.draw_img(self.window.labelFilePath.text(), item[1])
             self.window.progressAnalyze.setValue(100)
             self.window.buttonStartAnalyze.setEnabled(True)
             self.window.tabWidget.setCurrentIndex(2)
@@ -392,7 +395,7 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
         msgBox = QMessageBox()
         msgBox.setWindowTitle("О программе")
         #msgBox.setText("Система медицинской диагностики")
-        msgBox.setText("Программа (альфа-версия) предназначена для \
+        msgBox.setText("Программа (бета-версия) предназначена для \
 классификации злокачественных образований, наблюдающихся при раке легкого. \
 Для удобства работы в программе реализован пользовательский интерфейс. \
 В прилагающейся БД программа хранит данные для авторизации, данные о \
