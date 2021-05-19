@@ -568,6 +568,7 @@ QTabBar::tab{
     </property>
     <addaction name="actionLoad"/>
     <addaction name="action"/>
+    <addaction name="action_2"/>
    </widget>
    <widget class="QMenu" name="menuUser">
     <property name="title">
@@ -608,6 +609,11 @@ QTabBar::tab{
   <action name="action">
    <property name="text">
     <string>Загрузить пациента</string>
+   </property>
+  </action>
+  <action name="action_2">
+   <property name="text">
+    <string>Открыть папку</string>
    </property>
   </action>
  </widget>

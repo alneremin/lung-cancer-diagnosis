@@ -36,14 +36,14 @@ class MIAController(QObject):
         
         # реагируем на все изменения в течение работы анализатора 
         self.inProgress.connect(self.views['MainWindow'].changeProgressBar)
-
+        self.inProgress.connect(self.views['MainWindow'].processOnebyOne)
     """
         # РАБОТА НЕЙРОСЕТИ
     """
 
     def startAnalyze(self, filePath):
         self.mia.work = True
-        logger.info("Запускается поток для анализа для работы нейросети")
+        logger.info("Запускается поток анализа КТ-снимка")
         x1 = threading.Thread(target=self.analyze, args=(filePath,))
         x1.start()
 
@@ -59,8 +59,8 @@ class MIAController(QObject):
             if segmentated and segm_is_loaded:
                 classifed, clss, local = self.mia.classify(newFilePath)
                 if classifed:
+                    self.inProgress.emit([[clss, segment_img,local, filePath]])
                     self.inProgress.emit([1])
-                    self.inProgress.emit([[clss, segment_img,local]])
                 else:
                     self.inProgress.emit([2])
             else:
@@ -83,10 +83,14 @@ class MIAController(QObject):
         self.views['MainWindow'].fillTable()
 
     def saveResults(self):
-        if self.views['MainWindow'].resultData != None:
+        isSaved = True
+        if self.views['MainWindow'].resultData != []:
             data = self.views['MainWindow'].getResultData()
-            isSaved = self.model.saveAnalyze(data)
-            self.views['MainWindow'].dataIsSaved(isSaved)
+            for i in data:
+                isSaved = self.model.saveAnalyze(i)
+                if not isSaved:
+                    break
+        self.views['MainWindow'].dataIsSaved(isSaved)
 
     def removePatient(self, _id):
         return self.model.removePatient(_id)

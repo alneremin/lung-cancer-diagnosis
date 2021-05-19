@@ -15,6 +15,7 @@ from Window.mainWindow import Ui_MainWindow
 from Window.mpl import MplCanvas
 import SimpleITK as sitk
 from datetime import datetime
+import threading
 import logging
 
 class Result():
@@ -31,7 +32,8 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
         super(self.__class__, self).__init__()
         self.window = Ui_MainWindow()
         self.window.setupUi(self)
-        self.resultData = None
+        self.resultData = []
+        self.dcmFiles = []
         self.model = model
         self.controller = controller
         self.controller.setView(self, 'MainWindow')
@@ -113,6 +115,7 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
         actions = {
             'Загрузить снимок': self.loadFile,
             'Загрузить пациента': self.loadPatient,
+            'Открыть папку': self.loadFolder,
             'Выйти': self.controller.exit,
             'О программе': self.aboutProgram
         }
@@ -139,6 +142,10 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
                 msgBox.setDefaultButton(QMessageBox.Ok)
                 msgBox.exec()
 
+    def loadFolder(self):
+        fname = QFileDialog.getExistingDirectory(self, 'Open folder', os.getcwd())
+        if fname != "":
+            self.window.labelFilePath.setText(fname)
     """
         # Работа с таблицей tablePatient
     """
@@ -288,27 +295,71 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
         # Анализ данных
     """
     def startAnalyze(self):
+        print(self.controller.mia.work , self.dcmFiles)
+        if self.controller.mia.work or self.dcmFiles != []:
+            QMessageBox.critical(
+              None,
+              "Предупреждение!",
+              f"Нейросеть в работе!",
+            )
+            return
 
-        try:
-            a = sitk.ReadImage(self.window.labelFilePath.text())
-            if a is None:
-                raise Exception('Unable open CT-snapshot.')
-        except Exception as e:
-            logger.exception('Не удалось открыть КТ-снимок')
-            self.writeAnalyzeInLog(f'Ошибка чтения файла: {self.window.labelFilePath.text()}')
+        pathToDCM = self.window.labelFilePath.text()
+        if  pathToDCM == "" or pathToDCM == "Файл не открыт" or not os.path.exists(pathToDCM):
             QMessageBox.critical(
               None,
               "Ошибка!",
               f"Не удалось открыть файл с КТ-снимком, загрузите файл!",
             )
             return
+
+        if os.path.isdir(pathToDCM):
+            self.dcmFiles = [os.path.join(pathToDCM, f) for f in os.listdir(pathToDCM) 
+            if os.path.isfile(os.path.join(pathToDCM, f)) and f[-3:]=="dcm"]
+        else:
+            self.dcmFiles = [pathToDCM]
+
+        self.processOnebyOne([1])
+        #x1 = threading.Thread(target=self.processOnebyOne, args=(files,))
+        #x1.start()
+
+    def processOnebyOne(self, item):
+        if type(item) == list and len(item) > 0 and item[0] == 1:
+            pass
+        else:
+            return
+
+        if self.dcmFiles == []:
+            #self.window.buttonStartAnalyze.setEnabled(True)
+            self.canvas.draw_img(self.resultData)
+            self.window.tabWidget.setCurrentIndex(2)
+            return
+
+        file = self.dcmFiles[0]
+        self.dcmFiles = self.dcmFiles[1:]
+
+        self.writeAnalyzeInLog(f'Открытие изображения {os.path.split(file)[1]}')
+        try:
+            a = sitk.ReadImage(file)
+            if a is None:
+                raise Exception('Unable open CT-snapshot.')
+        except Exception as e:
+            logger.exception('Не удалось открыть КТ-снимок')
+            self.writeAnalyzeInLog(f'Ошибка чтения файла: {file}')
+            QMessageBox.critical(
+              None,
+              "Ошибка!",
+              f"Не удалось открыть файл с КТ-снимком, загрузите другой файл!",
+            )
+            return
         self.writeAnalyzeInLog('Загрузка модели...')
 
-        self.window.buttonStartAnalyze.setEnabled(False)
+        #self.window.buttonStartAnalyze.setEnabled(False)
         self.window.progressAnalyze.setFormat('Load model...')
-        self.window.progressAnalyze.setValue(33)
+        self.window.progressAnalyze.setValue(10)
 
-        self.controller.startAnalyze(self.window.labelFilePath.text())
+        self.controller.startAnalyze(file)
+        
 
     def writeAnalyzeInLog(self, string):
 
@@ -332,7 +383,7 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
 
         logs = {
             0 : 'Классификация и распознавание данных...',
-            1 : 'Работа нейросети окончена.',
+            1 : 'Изображение обработано.',
             2 : 'Выявлены ошибки при классификации/распознавании. Подробнее: data.log',
             3 : 'Выявлены ошибки при загрузке модели. Подробнее: data.log',
             4 : 'Сегментация данных...',
@@ -345,25 +396,26 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
                 self.window.progressAnalyze.setValue(self.window.progressAnalyze.value() + 25)
             else:
                 self.window.progressAnalyze.setValue(0)
-                self.window.buttonStartAnalyze.setEnabled(True)
+                #self.window.buttonStartAnalyze.setEnabled(True)
             self.writeAnalyzeInLog(logs[item])
         elif type(item) == list:
             #self.window.textEditResult.setText('Lung cancer class: ' + item[0])
-            item.append(self.window.labelFilePath.text())
-            self.resultData = Result(item)
-            self.canvas.draw_img(self.resultData)
+            #item.append(self.window.labelFilePath.text())
+            self.resultData.append(Result(item))
+            #self.canvas.draw_img(self.resultData[-1])
             self.window.progressAnalyze.setValue(100)
-            self.window.buttonStartAnalyze.setEnabled(True)
-            self.window.tabWidget.setCurrentIndex(2)
 
     def getResultData(self):
         cur = self.window.tablePatient.currentRow()
-        return [
-            self.window.tablePatient.item(cur, 1).text(),
-            self.resultData.imgClass,
-            self.resultData.segmentatedImg,
-            self.controller.image_to_byte_array(self.resultData.pathToInitImg)
-        ]
+        result = []
+        for i in self.resultData:
+            result.append([
+                self.window.tablePatient.item(cur, 1).text(),
+                i.imgClass,
+                i.segmentatedImg,
+                self.controller.image_to_byte_array(i.pathToInitImg)
+            ])
+        return result
 
     def dataIsSaved(self, isSaved):
         msgBox = QMessageBox()
@@ -415,8 +467,9 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
             
 
     def loadFile(self):
-        fname = QFileDialog.getOpenFileName(self, 'Open file', os.getcwd(),"Image files (*.jpg *.dcm *.png)")
-        self.window.labelFilePath.setText(fname[0])
+        fname = QFileDialog.getOpenFileName(self, 'Open file', os.getcwd(),"Image files (*.dcm)")
+        if fname[0] != "":
+            self.window.labelFilePath.setText(fname[0])
 
     def aboutProgram(self):
         msgBox = QMessageBox()
