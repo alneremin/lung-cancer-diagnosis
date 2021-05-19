@@ -17,6 +17,12 @@ import SimpleITK as sitk
 from datetime import datetime
 import logging
 
+class Result():
+    def __init__(self, data):
+        self.imgClass = data[0]
+        self.segmentatedImg = data[1]
+        self.tumorBorders = data[2]
+        self.pathToInitImg = data[3]
 
 logger = logging.getLogger('log02')
 
@@ -25,7 +31,7 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
         super(self.__class__, self).__init__()
         self.window = Ui_MainWindow()
         self.window.setupUi(self)
-
+        self.resultData = None
         self.model = model
         self.controller = controller
         self.controller.setView(self, 'MainWindow')
@@ -105,7 +111,8 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
 
     def menuTriggered(self, action):
         actions = {
-            'Загрузить': self.loadFile,
+            'Загрузить снимок': self.loadFile,
+            'Загрузить пациента': self.loadPatient,
             'Выйти': self.controller.exit,
             'О программе': self.aboutProgram
         }
@@ -113,6 +120,24 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
             actions[action.text()]()
         except:
             logger.exception('Не удалось найти пункт верхнего меню: %s', action.text())
+
+
+    def loadPatient(self):
+        fname = QFileDialog.getOpenFileName(self, 'Open file', os.getcwd(),"Image files (*.dcm)")
+        if fname[0] != "":
+            try:
+                img = sitk.ReadImage(fname[0])
+                for i in img.GetMetaDataKeys():
+                    print(i, img.GetMetaData(i))
+            except Exception:
+                msgBox = QMessageBox()
+                msgBox.setWindowTitle("Ошибка!")
+
+                msgBox.setText("Не удалось открыть данные.")
+                msgBox.setStandardButtons(QMessageBox.Ok)
+                msgBox.setIcon(QMessageBox.Information)
+                msgBox.setDefaultButton(QMessageBox.Ok)
+                msgBox.exec()
 
     """
         # Работа с таблицей tablePatient
@@ -298,7 +323,7 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
         item = item[0]
 
         data = {
-            0 : 'Classify...',
+            0 : 'Classify and discern...',
             1 : 'Completed',
             2 : 'Classification error!',
             3 : 'Loading error!',
@@ -306,9 +331,9 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
         }
 
         logs = {
-            0 : 'Классификация данных...',
+            0 : 'Классификация и распознавание данных...',
             1 : 'Работа нейросети окончена.',
-            2 : 'Выявлены ошибки при классификации. Подробнее: data.log',
+            2 : 'Выявлены ошибки при классификации/распознавании. Подробнее: data.log',
             3 : 'Выявлены ошибки при загрузке модели. Подробнее: data.log',
             4 : 'Сегментация данных...',
             5 : 'Выявлены ошибки при сегментации. Подробнее: data.log',
@@ -316,15 +341,17 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
 
         if type(item) == int:
             self.window.progressAnalyze.setFormat(data[item])
-            if item in [0,1]:
-                self.window.progressAnalyze.setValue(item *33 + 34)
+            if item in [0,1,4]:
+                self.window.progressAnalyze.setValue(self.window.progressAnalyze.value() + 25)
             else:
                 self.window.progressAnalyze.setValue(0)
                 self.window.buttonStartAnalyze.setEnabled(True)
             self.writeAnalyzeInLog(logs[item])
         elif type(item) == list:
             #self.window.textEditResult.setText('Lung cancer class: ' + item[0])
-            self.canvas.draw_img(self.window.labelFilePath.text(), item)
+            item.append(self.window.labelFilePath.text())
+            self.resultData = Result(item)
+            self.canvas.draw_img(self.resultData)
             self.window.progressAnalyze.setValue(100)
             self.window.buttonStartAnalyze.setEnabled(True)
             self.window.tabWidget.setCurrentIndex(2)
@@ -333,9 +360,9 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
         cur = self.window.tablePatient.currentRow()
         return [
             self.window.tablePatient.item(cur, 1).text(),
-            self.window.textEditResult.toPlainText(),
-            bytearray(0),
-            self.controller.image_to_byte_array(self.window.labelFilePath.text())
+            self.resultData.imgClass,
+            self.resultData.segmentatedImg,
+            self.controller.image_to_byte_array(self.resultData.pathToInitImg)
         ]
 
     def dataIsSaved(self, isSaved):
@@ -406,3 +433,4 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
         msgBox.setDefaultButton(QMessageBox.Ok)
 
         msgBox.exec()
+

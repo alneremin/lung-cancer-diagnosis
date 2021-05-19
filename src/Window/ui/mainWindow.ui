@@ -567,6 +567,7 @@ QTabBar::tab{
      <string>Файл</string>
     </property>
     <addaction name="actionLoad"/>
+    <addaction name="action"/>
    </widget>
    <widget class="QMenu" name="menuUser">
     <property name="title">
@@ -586,7 +587,7 @@ QTabBar::tab{
   </widget>
   <action name="actionLoad">
    <property name="text">
-    <string>Загрузить</string>
+    <string>Загрузить снимок</string>
    </property>
   </action>
   <action name="actionQuit">
@@ -602,6 +603,11 @@ QTabBar::tab{
   <action name="actionAbout">
    <property name="text">
     <string>О программе</string>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>Загрузить пациента</string>
    </property>
   </action>
  </widget>

@@ -23,19 +23,18 @@ class MplCanvas(Canvas):
         Canvas.setSizePolicy(self, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         Canvas.updateGeometry(self)
 
-    def draw_img(self, pathToInputFile, data):
+    def draw_img(self, result):
 
-        lung = sitk.GetArrayFromImage(sitk.ReadImage(pathToInputFile))
+        lung = sitk.GetArrayFromImage(sitk.ReadImage(result.pathToInitImg))
         lung = lung.reshape((512,512))#.astype(np.uint8)
 
         #img = mpimg.imread(pathToInputFile)
         #self.axes[0].imshow(lung)
-        imgClass, segmentatedImg, tumorBorders = data
-        self.axes[0].imshow(segmentatedImg)
+        self.axes[0].imshow(result.segmentatedImg)
 
-        self.axes[1].set(title = 'Класс опухоли ' + imgClass)
+        self.axes[1].set(title = 'Класс опухоли: ' + result.imgClass)
         self.axes[1].imshow(lung)
-        y1, x1, y2, x2 = tumorBorders * 512
+        y1, x1, y2, x2 = result.tumorBorders * 512
         color = np.array([219, 57, 57]) / 255
         p = matplotlib.patches.Rectangle((x1, y1), x2 - x1, y2 - y1, linewidth=2,
                                 alpha=0.7, linestyle="solid",

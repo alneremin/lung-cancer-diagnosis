@@ -83,9 +83,10 @@ class MIAController(QObject):
         self.views['MainWindow'].fillTable()
 
     def saveResults(self):
-        data = self.views['MainWindow'].getResultData()
-        isSaved = self.model.saveAnalyze(data)
-        self.views['MainWindow'].dataIsSaved(isSaved)
+        if self.views['MainWindow'].resultData != None:
+            data = self.views['MainWindow'].getResultData()
+            isSaved = self.model.saveAnalyze(data)
+            self.views['MainWindow'].dataIsSaved(isSaved)
 
     def removePatient(self, _id):
         return self.model.removePatient(_id)

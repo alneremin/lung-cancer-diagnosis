@@ -35,7 +35,7 @@ class TestClassifier(unittest.TestCase):
         state, res = self.mia.classify('')
         self.assertEqual(state, False)
 
-        state, res = self.mia.classify(self.preparedImage)
+        state, res, borders = self.mia.classify(self.preparedImage)
 
         self.assertEqual(state, True)
         self.assertEqual(res, 'A')
@@ -73,9 +73,9 @@ if __name__ == "__main__":
     unittest.main()
 
 
-"""
+"""Запуск тестов
  python3.7 mia_test.py \
- "/home/alner/documents/sem6/cource work/lung-cancer-diagnosis/src/tests/MIATest/1.3.6.1.4.1.14519.5.2.1.6655.2359.103293611003651848123608366756.dcm" \
- "/home/alner/Загрузки/vgg16_mia_model.h5" \
- "/home/alner/documents/sem6/cource work/lung-cancer-diagnosis/src/tests/MIATest/1.3.6.1.4.1.14519.5.2.1.6655.2359.103293611003651848123608366756_segmentated.dcm"
+ "1.3.6.1.4.1.14519.5.2.1.6655.2359.103293611003651848123608366756.dcm" \
+ "../../MIA/models/nasnet_model.h5" \
+ "1.3.6.1.4.1.14519.5.2.1.6655.2359.103293611003651848123608366756_segmentated.dcm"
 """
