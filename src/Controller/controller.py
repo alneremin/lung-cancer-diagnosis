@@ -57,10 +57,10 @@ class MIAController(QObject):
             self.inProgress.emit([0])
             segmentated, segment_img, newFilePath = self.mia.segmentify(filePath)
             if segmentated and segm_is_loaded:
-                classifed, result = self.mia.classify(newFilePath)
+                classifed, clss, local = self.mia.classify(newFilePath)
                 if classifed:
                     self.inProgress.emit([1])
-                    self.inProgress.emit([[result, segment_img]])
+                    self.inProgress.emit([[clss, segment_img,local]])
                 else:
                     self.inProgress.emit([2])
             else:

@@ -18,7 +18,7 @@ class MIA:
         self.path = path
         self.model = dict()
         self.categories = ['A', 'B', 'E', 'G']
-        self.types = ['segment', 'class', 'local']
+        self.types = ['segment', 'class']
         self.work = False 
 
     def loadClassificationModel(self):
@@ -60,7 +60,7 @@ class MIA:
                 pil_img = Image.fromarray(lung, 'L')
                 pil_img.thumbnail((224,224), Image.ANTIALIAS)
                 lung = np.asarray(pil_img)
-                lung = np.stack((lung,)*3, axis=-1)
+                #lung = np.stack((lung,)*3, axis=-1)
                 lung = np.expand_dims(lung, axis=0)
                 print(lung.shape)
             except Exception as e:
@@ -68,8 +68,8 @@ class MIA:
                 return False, ''
 
         pred = self.model['class'].predict(lung)
-        logger.info(f"Результаты анализа: {pred[0]}")
-        return True, self.categories[np.argmax(pred[0])]
+        logger.info(f"Результаты анализа: {pred}")
+        return True, self.categories[np.argmax(pred[1])], pred[0][0]
         #print([round(i) for i in output[0]])
 
     def segmentify(self, img):

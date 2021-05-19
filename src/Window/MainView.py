@@ -323,8 +323,8 @@ class MainWindow(QtWidgets.QMainWindow): # Ui_MainWindow
                 self.window.buttonStartAnalyze.setEnabled(True)
             self.writeAnalyzeInLog(logs[item])
         elif type(item) == list:
-            self.window.textEditResult.setText('Lung cancer class: ' + item[0])
-            self.canvas.draw_img(self.window.labelFilePath.text(), item[1])
+            #self.window.textEditResult.setText('Lung cancer class: ' + item[0])
+            self.canvas.draw_img(self.window.labelFilePath.text(), item)
             self.window.progressAnalyze.setValue(100)
             self.window.buttonStartAnalyze.setEnabled(True)
             self.window.tabWidget.setCurrentIndex(2)
